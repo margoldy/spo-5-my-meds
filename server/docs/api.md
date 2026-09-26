@@ -29,7 +29,6 @@
 ```json
 {
   "access_token": "eyJ...",
-  "refresh_token": "eyJ...",
   "token_type": "bearer",
   "user": {
     "id": "6d8f3a10-91c7-4b1d-a4d8-9b102703f521",
@@ -38,18 +37,6 @@
   }
 }
 ```
-
-### `POST /auth/refresh`
-
-Принимает `refresh_token`, отзывает его и возвращает новую пару токенов.
-
-```json
-{ "refresh_token": "eyJ..." }
-```
-
-### `POST /auth/logout`
-
-Отзывает текущую refresh-сессию. Ответ `204 No Content`.
 
 ## Профиль
 
