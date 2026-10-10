@@ -24,8 +24,6 @@ py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-> В PowerShell используйте именно `py -3.13`, а не Python из Git Bash/MSYS2:
-> он создаёт Windows-окружение с папкой `Scripts`.
 
 3. Установите зависимости:
 
@@ -33,11 +31,17 @@ py -3.13 -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-4. Создайте PostgreSQL-базу с именем из `DB_NAME`. При первом запуске приложение создаст таблицы через SQLAlchemy.
+4. Создайте PostgreSQL-базу с именем из `aptechka_db`.
 
-5. Создайте файл `.env` на основе `.env.example` и укажите настройки PostgreSQL, JWT и почты.
+5. Создайте файл `.env` на основе `.env.example` и укажите данные.
 
-6. Запустите сервер:
+6. Создайте таблицы:
+
+```powershell
+python -m app.db.create_tables
+```
+
+7. Запустите сервер:
 
 ```powershell
 python -m uvicorn app.main:app --reload
