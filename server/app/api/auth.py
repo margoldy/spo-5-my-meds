@@ -1,11 +1,14 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from jose import JWTError
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.schemas.auth import (
+    AuthAccessTokenResponse,
     AuthCodeRequest,
     AuthCodeVerifyRequest,
     AuthMessageResponse,
+    AuthRefreshRequest,
     AuthVerifyResponse,
 )
 from app.schemas.users import UserMeResponse
@@ -37,7 +40,7 @@ def verify_code(
     db: Session = Depends(get_db),
 ) -> AuthVerifyResponse:
     try:
-        access_token, user = AuthService(db).verify_code(
+        access_token, refresh_token, user = AuthService(db).verify_code(
             email=str(body.email),
             code=body.code,
         )
@@ -49,5 +52,24 @@ def verify_code(
 
     return AuthVerifyResponse(
         access_token=access_token,
+        refresh_token=refresh_token,
         user=UserMeResponse.model_validate(user),
     )
+
+
+@router.post("/token/refresh", response_model=AuthAccessTokenResponse)
+def refresh_access_token(
+    body: AuthRefreshRequest,
+    db: Session = Depends(get_db),
+) -> AuthAccessTokenResponse:
+    try:
+        access_token = AuthService(db).refresh_access_token(
+            refresh_token=body.refresh_token,
+        )
+    except (ValueError, JWTError) as error:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Недействительный или просроченный refresh-токен",
+        ) from error
+
+    return AuthAccessTokenResponse(access_token=access_token)

@@ -29,12 +29,32 @@
 ```json
 {
   "access_token": "eyJ...",
+  "refresh_token": "eyJ...",
   "token_type": "bearer",
   "user": {
     "id": "6d8f3a10-91c7-4b1d-a4d8-9b102703f521",
     "email": "user@example.com",
     "role": "user"
   }
+}
+```
+
+`access_token` действует 30 минут, `refresh_token` — 30 дней.
+
+### `POST /auth/token/refresh`
+
+Выдаёт новый access-токен по действующему refresh-токену.
+
+```json
+{ "refresh_token": "eyJ..." }
+```
+
+Ответ `200 OK`:
+
+```json
+{
+  "access_token": "eyJ...",
+  "token_type": "bearer"
 }
 ```
 
