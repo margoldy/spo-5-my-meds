@@ -12,13 +12,13 @@ from app.db.models.base import Base
 class Schedule(Base):
     __tablename__ = "schedules"
     __table_args__ = (
-        CheckConstraint("cardinality(days_of_week) > 0", name="ck_schedules_days_not_empty"),
+        CheckConstraint("cardinality(days_of_week) > 0", name="ck_schedule_days"),
         CheckConstraint(
             "days_of_week <@ ARRAY[1, 2, 3, 4, 5, 6, 7]::smallint[]",
-            name="ck_schedules_days_in_week_range",
+            name="ck_schedule_day_range",
         ),
-        CheckConstraint("dose_amount > 0", name="ck_schedules_positive_dose"),
-        CheckConstraint("btrim(dose_unit) <> ''", name="ck_schedules_dose_unit_not_empty"),
+        CheckConstraint("dose_amount > 0", name="ck_schedule_dose"),
+        CheckConstraint("btrim(dose_unit) <> ''", name="ck_schedule_unit"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(

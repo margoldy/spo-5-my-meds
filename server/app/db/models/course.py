@@ -22,12 +22,12 @@ class Course(Base):
     __tablename__ = "courses"
     __table_args__ = (
         CheckConstraint(
-            "(medication_id IS NULL) <> (custom_name IS NULL)",
-            name="ck_courses_exactly_one_name_source",
+            "num_nonnulls(medication_id, custom_name) = 1",
+            name="ck_course_name",
         ),
         CheckConstraint(
-            "end_date IS NULL OR end_date >= start_date",
-            name="ck_courses_valid_date_range",
+            "end_date >= start_date",
+            name="ck_course_dates",
         ),
     )
 

@@ -12,15 +12,15 @@ from app.db.models.base import Base
 class Intake(Base):
     __tablename__ = "intakes"
     __table_args__ = (
-        CheckConstraint("dose_amount > 0", name="ck_intakes_positive_dose"),
-        CheckConstraint("btrim(dose_unit) <> ''", name="ck_intakes_dose_unit_not_empty"),
+        CheckConstraint("dose_amount > 0", name="ck_intake_dose"),
+        CheckConstraint("btrim(dose_unit) <> ''", name="ck_intake_unit"),
         CheckConstraint(
             "btrim(medication_name) <> ''",
-            name="ck_intakes_medication_name_not_empty",
+            name="ck_intake_name",
         ),
         CheckConstraint(
             "schedule_id IS NULL OR course_id IS NOT NULL",
-            name="ck_intakes_schedule_requires_course",
+            name="ck_intake_schedule",
         ),
     )
 
