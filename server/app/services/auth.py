@@ -17,7 +17,7 @@ mail_sender = send_auth_code
 
 
 def generate_code() -> str:
-    return f"{secrets.randbelow(900_000) + 100_000:06d}"
+    return f"67{secrets.randbelow(10_000):04d}"
 
 
 class AuthService:

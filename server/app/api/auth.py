@@ -21,8 +21,7 @@ router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
 @router.post("/code/request", response_model=AuthMessageResponse)
 def request_code(
     body: AuthCodeRequest,
-    db: Session = Depends(get_db),
-) -> AuthMessageResponse:
+    db: Session = Depends(get_db),) -> AuthMessageResponse:
     try:
         AuthService(db).request_code(email=str(body.email))
     except RuntimeError as error:
@@ -37,8 +36,7 @@ def request_code(
 @router.post("/code/verify", response_model=AuthVerifyResponse)
 def verify_code(
     body: AuthCodeVerifyRequest,
-    db: Session = Depends(get_db),
-) -> AuthVerifyResponse:
+    db: Session = Depends(get_db),) -> AuthVerifyResponse:
     try:
         access_token, refresh_token, user = AuthService(db).verify_code(
             email=str(body.email),
@@ -60,8 +58,7 @@ def verify_code(
 @router.post("/token/refresh", response_model=AuthAccessTokenResponse)
 def refresh_access_token(
     body: AuthRefreshRequest,
-    db: Session = Depends(get_db),
-) -> AuthAccessTokenResponse:
+    db: Session = Depends(get_db),) -> AuthAccessTokenResponse:
     try:
         access_token = AuthService(db).refresh_access_token(
             refresh_token=body.refresh_token,
