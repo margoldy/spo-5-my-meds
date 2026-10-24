@@ -7,7 +7,6 @@ import { state } from '../store/state'
 const form = reactive({
   name: state.user?.name || '',
   birthDate: state.user?.birth_date || '',
-  avatarUrl: state.user?.avatar_url || '',
   timezone: state.user?.timezone || 'Europe/Moscow',
 })
 const initials = computed(() => (form.name || state.user?.email || '?').trim().slice(0, 2).toUpperCase())
@@ -26,8 +25,7 @@ async function submit() {
   <section class="screen no-nav">
     <AppHeader title="Профиль" back @back="go('settings')" />
     <div class="profile-hero">
-      <img v-if="form.avatarUrl" class="profile-avatar image-avatar" :src="form.avatarUrl" alt="">
-      <div v-else class="profile-avatar">{{ initials }}</div>
+      <div class="profile-avatar">{{ initials }}</div>
       <strong>{{ form.name || 'Как вас зовут?' }}</strong>
       <span>{{ state.user?.email }}</span>
     </div>
@@ -43,9 +41,7 @@ async function submit() {
         <input v-model="form.birthDate" class="detail-field" type="date">
       </div>
       <div class="form-section">
-        <div class="form-section-heading"><span class="section-kicker">Оформление</span><strong>Аватар и время</strong></div>
-        <label class="field-label">Ссылка на аватар</label>
-        <input v-model.trim="form.avatarUrl" class="detail-field" type="url" placeholder="https://...">
+        <div class="form-section-heading"><span class="section-kicker">Настройки</span><strong>Часовой пояс</strong></div>
         <label class="field-label">Часовой пояс</label>
         <select v-model="form.timezone" class="detail-field">
           <option value="Europe/Moscow">Москва</option>

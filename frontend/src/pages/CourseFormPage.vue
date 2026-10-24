@@ -2,7 +2,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import AppHeader from '../components/ui/AppHeader.vue'
 import TimeInput from '../components/ui/TimeInput.vue'
-import { isoDate } from '../utils/date'
+import { dateInTimeZone } from '../utils/date'
 import { go, loadCatalog, saveCourse, showError } from '../store/store'
 import { state } from '../store/state'
 
@@ -13,7 +13,7 @@ const editingIndex = ref(null)
 const form = reactive({
   medicationId: state.coursePreset?.id || '',
   name: state.coursePreset?.name || '',
-  startDate: isoDate(new Date()),
+  startDate: dateInTimeZone(new Date(), state.user?.timezone),
   endDate: '',
   notes: '',
 })

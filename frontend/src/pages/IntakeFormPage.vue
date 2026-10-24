@@ -1,14 +1,14 @@
 <script setup>
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 import AppHeader from '../components/ui/AppHeader.vue'
-import { localDateTime } from '../utils/date'
+import { dateTimeInTimeZone } from '../utils/date'
 import { editIntake, go, loadCatalog, saveUnplannedIntake, showError } from '../store/store'
 import { state } from '../store/state'
 
 const editing = computed(() => state.intakes.find(item => item.id === state.selectedIntakeId))
 const mode = ref('course')
 const otherSource = ref('catalog')
-const form = reactive({ courseId: '', medicationId: '', medicationName: '', amount: 1, unit: 'таблетка', takenAt: localDateTime() })
+const form = reactive({ courseId: '', medicationId: '', medicationName: '', amount: 1, unit: 'таблетка', takenAt: dateTimeInTimeZone(new Date(), state.user?.timezone) })
 
 function useCourse() {
   const course = state.courses.find(item => item.id === form.courseId)
@@ -49,7 +49,7 @@ watch(editing, item => {
     medicationName: item.medicationName,
     amount: item.amount,
     unit: item.unit,
-    takenAt: localDateTime(new Date(item.taken_at)),
+    takenAt: dateTimeInTimeZone(new Date(item.taken_at), state.user?.timezone),
   })
 }, { immediate: true })
 

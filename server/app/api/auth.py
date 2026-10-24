@@ -1,3 +1,5 @@
+import logging
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from jose import JWTError
 from sqlalchemy.orm import Session
@@ -15,6 +17,7 @@ from app.schemas.users import UserMeResponse
 from app.services.auth import AuthService
 
 
+logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/auth", tags=["Auth"])
 
 
@@ -31,6 +34,7 @@ def request_code(
             detail=str(error),
         ) from error
     except RuntimeError as error:
+        logger.exception("Не удалось отправить код авторизации")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Не удалось отправить код",

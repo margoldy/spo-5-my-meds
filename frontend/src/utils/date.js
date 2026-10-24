@@ -8,6 +8,59 @@ export function isoDate(date) {
   return `${year}-${month}-${day}`
 }
 
+export function dateInTimeZone(date, timeZone) {
+  const parts = new Intl.DateTimeFormat('en', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone,
+  }).formatToParts(date)
+  const values = Object.fromEntries(parts.map(part => [part.type, part.value]))
+  return `${values.year}-${values.month}-${values.day}`
+}
+
+export function dateTimeInTimeZone(date, timeZone) {
+  const parts = new Intl.DateTimeFormat('en', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+    timeZone,
+  }).formatToParts(date)
+  const values = Object.fromEntries(parts.map(part => [part.type, part.value]))
+  return `${values.year}-${values.month}-${values.day}T${values.hour}:${values.minute}`
+}
+
+function timeZoneOffset(date, timeZone) {
+  const parts = new Intl.DateTimeFormat('en', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+    timeZone,
+  }).formatToParts(date)
+  const values = Object.fromEntries(parts.map(part => [part.type, part.value]))
+  const displayedAsUtc = Date.UTC(values.year, Number(values.month) - 1, values.day, values.hour, values.minute, values.second)
+  const wholeSecond = Math.floor(date.getTime() / 1000) * 1000
+  return displayedAsUtc - wholeSecond
+}
+
+export function zonedDateTimeToIso(value, timeZone) {
+  const match = value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.(\d{1,3}))?)?$/)
+  if (!match) throw new Error('Неверные дата и время')
+  const [, year, month, day, hour, minute, second = '0', fraction = ''] = match
+  const milliseconds = Number(fraction.padEnd(3, '0'))
+  const localAsUtc = Date.UTC(year, Number(month) - 1, day, hour, minute, second, milliseconds)
+  let result = localAsUtc - timeZoneOffset(new Date(localAsUtc), timeZone)
+  result = localAsUtc - timeZoneOffset(new Date(result), timeZone)
+  return new Date(result).toISOString()
+}
+
 export function monthTitle(date) {
   const title = monthFormatter.format(date)
   return title.charAt(0).toUpperCase() + title.slice(1)
@@ -37,11 +90,6 @@ export function formatTime(value, timeZone) {
     minute: '2-digit',
     timeZone,
   }).format(new Date(value))
-}
-
-export function localDateTime(value = new Date()) {
-  const offset = value.getTimezoneOffset() * 60000
-  return new Date(value.getTime() - offset).toISOString().slice(0, 16)
 }
 
 export function calendarDays(month) {

@@ -1,4 +1,4 @@
-from sqlalchemy import func, or_, select
+from sqlalchemy import case, func, or_, select
 from sqlalchemy.orm import Session
 
 from app.db.models import Medication
@@ -22,8 +22,11 @@ class MedicationsQueries:
 
         if not include_inactive:
             filters.append(Medication.is_active.is_(True))
-        if search:
-            pattern = f"%{search.strip()}%"
+        search_term = search.strip() if search else ""
+        relevance = None
+        if search_term:
+            pattern = f"%{search_term}%"
+            starts_with = f"{search_term}%"
             filters.append(
                 or_(
                     Medication.name.ilike(pattern),
@@ -31,18 +34,31 @@ class MedicationsQueries:
                     Medication.manufacturer.ilike(pattern),
                 )
             )
+            relevance = case(
+                (func.lower(Medication.name) == search_term.lower(), 0),
+                (Medication.name.ilike(starts_with), 1),
+                (Medication.name.ilike(pattern), 2),
+                (
+                    func.lower(Medication.international_name)
+                    == search_term.lower(),
+                    3,
+                ),
+                (Medication.international_name.ilike(starts_with), 4),
+                (Medication.international_name.ilike(pattern), 5),
+                else_=6,
+            )
         if category:
             filters.append(Medication.category == category)
         if form:
             filters.append(Medication.form == form)
 
-        items = self.db.execute(
-            select(Medication)
-            .where(*filters)
-            .order_by(Medication.name)
-            .limit(limit)
-            .offset(offset)
-        ).scalars().all()
+        query = select(Medication).where(*filters)
+        if relevance is not None:
+            query = query.order_by(relevance, Medication.name)
+        else:
+            query = query.order_by(Medication.name)
+
+        items = self.db.execute(query.limit(limit).offset(offset)).scalars().all()
 
         total = self.db.execute(
             select(func.count()).select_from(Medication).where(*filters)

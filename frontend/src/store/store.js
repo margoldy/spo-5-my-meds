@@ -15,6 +15,7 @@ import {
   wrapEncryptionKey,
 } from '../utils/crypto'
 import { clearTokens, getAccessToken, getRefreshToken, savePreferences, saveTokens } from '../utils/storage'
+import { dateInTimeZone, zonedDateTimeToIso } from '../utils/date'
 import { scheduleReminders } from '../utils/notifications'
 import { state } from './state'
 
@@ -192,7 +193,7 @@ async function mapCourse(item) {
 export async function loadCourses() {
   const result = await coursesApi.getCourses()
   state.courses = await Promise.all(result.items.map(mapCourse))
-  scheduleReminders(state.courses, state.preferences)
+  scheduleReminders(state.courses, state.preferences, state.user?.timezone)
 }
 
 export async function saveCourse(form, schedules) {
@@ -281,10 +282,12 @@ export async function loadDay(date) {
 
 export async function takeScheduled(item) {
   const now = new Date()
+  const today = dateInTimeZone(now, state.user?.timezone)
+  const plannedDate = item.planned_at.slice(0, 10)
   await intakesApi.createIntake({
     course_id: item.course_id,
     schedule_id: item.schedule_id,
-    taken_at: now.toISOString(),
+    taken_at: plannedDate === today ? now.toISOString() : item.planned_at,
     encrypted_data: await encrypted({
       medicationName: item.courseData.name,
       amount: item.scheduleData.amount,
@@ -303,7 +306,7 @@ export async function saveUnplannedIntake(form) {
   await intakesApi.createIntake({
     course_id: form.courseId || null,
     schedule_id: null,
-    taken_at: new Date(form.takenAt).toISOString(),
+    taken_at: zonedDateTimeToIso(form.takenAt, state.user?.timezone),
     encrypted_data: await encrypted({
       medicationName: form.medicationName.trim(),
       amount: Number(form.amount),
@@ -325,7 +328,7 @@ export async function loadIntakes(filters = {}) {
 
 export async function editIntake(id, form) {
   await intakesApi.updateIntake(id, {
-    taken_at: new Date(form.takenAt).toISOString(),
+    taken_at: zonedDateTimeToIso(form.takenAt, state.user?.timezone),
     encrypted_data: await encrypted({
       medicationName: form.medicationName.trim(),
       amount: Number(form.amount),
@@ -346,16 +349,16 @@ export async function saveProfile(form) {
   state.user = await usersApi.updateMe({
     name: form.name || null,
     birth_date: form.birthDate || null,
-    avatar_url: form.avatarUrl || null,
     timezone: form.timezone,
   })
+  scheduleReminders(state.courses, state.preferences, state.user.timezone)
   showToast('Профиль сохранён')
 }
 
 export function updatePreferences(value) {
   state.preferences = { ...state.preferences, ...value }
   savePreferences(state.preferences)
-  scheduleReminders(state.courses, state.preferences)
+  scheduleReminders(state.courses, state.preferences, state.user?.timezone)
 }
 
 export async function saveMedication(form, id = null) {

@@ -1,12 +1,13 @@
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue'
 import EmptyState from '../components/ui/EmptyState.vue'
-import { calendarDays, formatTime, isoDate, monthTitle } from '../utils/date'
+import { calendarDays, dateInTimeZone, formatTime, isoDate, monthTitle } from '../utils/date'
 import { cancelScheduled, go, loadDay, showError, takeScheduled } from '../store/store'
 import { state } from '../store/state'
 
-const selected = ref(isoDate(new Date()))
-const month = ref(new Date(new Date().getFullYear(), new Date().getMonth(), 1))
+const initialDate = dateInTimeZone(new Date(), state.user?.timezone)
+const selected = ref(initialDate)
+const month = ref(new Date(`${initialDate}T12:00:00`))
 const days = computed(() => calendarDays(month.value))
 const groupedItems = computed(() => state.dayItems.slice().sort((a, b) => a.planned_at.localeCompare(b.planned_at)))
 

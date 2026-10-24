@@ -48,8 +48,7 @@ async function forget() {
   <section class="screen">
     <h1 class="title">Настройки</h1>
     <button class="settings-card" type="button" @click="go('profile')">
-      <img v-if="state.user?.avatar_url" class="avatar image-avatar" :src="state.user.avatar_url" alt="">
-      <span v-else class="avatar">{{ initials }}</span>
+      <span class="avatar">{{ initials }}</span>
       <span><strong>{{ state.user?.name || 'Без имени' }}</strong><small>{{ state.user?.email }}</small></span>
       <span class="row-arrow">›</span>
     </button>

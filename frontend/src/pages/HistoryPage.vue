@@ -2,7 +2,7 @@
 import { onMounted, reactive } from 'vue'
 import AppHeader from '../components/ui/AppHeader.vue'
 import EmptyState from '../components/ui/EmptyState.vue'
-import { formatDateTime } from '../utils/date'
+import { formatDateTime, zonedDateTimeToIso } from '../utils/date'
 import { go, loadIntakes, removeIntake, showError } from '../store/store'
 import { state } from '../store/state'
 
@@ -12,8 +12,8 @@ async function refresh() {
   try {
     const values = {}
     if (filters.course_id) values.course_id = filters.course_id
-    if (filters.from) values.from = new Date(`${filters.from}T00:00:00`).toISOString()
-    if (filters.to) values.to = new Date(`${filters.to}T23:59:59`).toISOString()
+    if (filters.from) values.from = zonedDateTimeToIso(`${filters.from}T00:00:00`, state.user?.timezone)
+    if (filters.to) values.to = zonedDateTimeToIso(`${filters.to}T23:59:59.999`, state.user?.timezone)
     await loadIntakes(values)
   } catch (error) {
     showError(error)
