@@ -79,6 +79,7 @@ export function formatDateTime(value, timeZone) {
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    hourCycle: 'h23',
     timeZone,
   }).format(new Date(value))
 }
@@ -88,6 +89,7 @@ export function formatTime(value, timeZone) {
   return new Intl.DateTimeFormat('ru-RU', {
     hour: '2-digit',
     minute: '2-digit',
+    hourCycle: 'h23',
     timeZone,
   }).format(new Date(value))
 }

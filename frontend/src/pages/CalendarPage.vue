@@ -57,7 +57,6 @@ onMounted(refresh)
   <section class="screen schedule-screen">
     <div class="schedule-intro">
       <span>План приёмов</span>
-      <strong>Что принять сегодня</strong>
     </div>
     <div class="month-heading">
       <button type="button" aria-label="Предыдущий месяц" @click="changeMonth(-1)">‹</button>

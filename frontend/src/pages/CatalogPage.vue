@@ -20,6 +20,20 @@ const hasFilters = computed(() => Boolean(search.value || category.value || medi
 const form = reactive({ name: '', internationalName: '', manufacturer: '', category: '', instructionUrl: '', form: '', strength: '', isActive: true })
 let searchTimer
 
+function readableName(value = '') {
+  const normalized = value.toLocaleLowerCase('ru-RU')
+  return normalized.charAt(0).toLocaleUpperCase('ru-RU') + normalized.slice(1)
+}
+
+function medicationCountText(count) {
+  const lastTwo = count % 100
+  const last = count % 10
+  if (lastTwo >= 11 && lastTwo <= 14) return `${count} лекарств`
+  if (last === 1) return `${count} лекарство`
+  if (last >= 2 && last <= 4) return `${count} лекарства`
+  return `${count} лекарств`
+}
+
 async function refresh() {
   try {
     await loadCatalog({ search: search.value, category: category.value, form: medicationForm.value })
@@ -92,28 +106,34 @@ onMounted(refresh)
 </script>
 
 <template>
-  <section class="screen no-nav" :class="{ 'guest-screen': guest }">
+  <section class="screen no-nav catalog-screen" :class="{ 'guest-screen': guest }">
     <AppHeader title="Справочник" back @back="closeCatalog" />
-    <div class="search-box">
-      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
-      <input v-model.trim="search" class="search" placeholder="Название или действующее вещество" @input="delayedRefresh">
-      <button v-if="search" type="button" aria-label="Очистить поиск" @click="search = ''; refresh()">×</button>
-    </div>
-    <div class="filter-panel">
-      <label><span>Категория</span><select v-model="category" @change="refresh"><option value="">Все</option><option v-for="item in categories" :key="item">{{ item }}</option></select></label>
-      <label><span>Форма выпуска</span><select v-model="medicationForm" @change="refresh"><option value="">Все</option><option v-for="item in forms" :key="item">{{ item }}</option></select></label>
+    <p class="catalog-lead">Найдите лекарство по названию, форме или действующему веществу</p>
+    <div class="catalog-controls">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
+        <input v-model.trim="search" class="search" placeholder="Поиск лекарства" @input="delayedRefresh">
+        <button v-if="search" type="button" aria-label="Очистить поиск" @click="search = ''; refresh()">×</button>
+      </div>
+      <div class="filter-panel">
+        <label><span>Категория</span><select v-model="category" @change="refresh"><option value="">Все категории</option><option v-for="item in categories" :key="item">{{ item }}</option></select></label>
+        <label><span>Форма выпуска</span><select v-model="medicationForm" @change="refresh"><option value="">Все формы</option><option v-for="item in forms" :key="item">{{ item }}</option></select></label>
+      </div>
     </div>
     <div class="catalog-summary">
-      <span>{{ state.catalog.length ? `Найдено: ${state.catalog.length}` : 'Результатов нет' }}</span>
+      <span>{{ state.catalog.length ? medicationCountText(state.catalog.length) : 'Результатов нет' }}</span>
       <button v-if="hasFilters" type="button" @click="clearFilters">Сбросить</button>
     </div>
     <button v-if="admin" class="secondary-button admin-add" type="button" @click="openAdmin()"><span>＋</span> Добавить лекарство</button>
     <div class="catalog-list">
       <article v-for="item in state.catalog" :key="item.id" class="catalog-row" :class="{ inactive: !item.is_active }">
         <button class="catalog-main" type="button" @click="selected = item">
-          <strong>{{ item.name }}</strong>
-          <small v-if="item.international_name">{{ item.international_name }}</small>
-          <span class="catalog-meta"><i v-if="item.form">{{ item.form }}</i><i v-if="item.strength">{{ item.strength }}</i></span>
+          <span class="catalog-monogram">{{ readableName(item.name).charAt(0) }}</span>
+          <span class="catalog-copy">
+            <strong>{{ readableName(item.name) }}</strong>
+            <small v-if="item.international_name">{{ readableName(item.international_name) }}</small>
+            <span class="catalog-meta"><i v-if="item.form">{{ item.form }}</i><i v-if="item.strength">{{ item.strength }}</i></span>
+          </span>
         </button>
         <span v-if="!admin" class="row-arrow">›</span>
         <button v-if="admin" class="mini-button" type="button" aria-label="Изменить" @click="openAdmin(item)">✎</button>
