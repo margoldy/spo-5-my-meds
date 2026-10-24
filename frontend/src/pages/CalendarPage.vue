@@ -54,13 +54,17 @@ onMounted(refresh)
 </script>
 
 <template>
-  <section class="screen">
+  <section class="screen schedule-screen">
+    <div class="schedule-intro">
+      <span>План приёмов</span>
+      <strong>Что принять сегодня</strong>
+    </div>
     <div class="month-heading">
       <button type="button" aria-label="Предыдущий месяц" @click="changeMonth(-1)">‹</button>
       <h1 class="title">{{ monthTitle(month) }}</h1>
       <button type="button" aria-label="Следующий месяц" @click="changeMonth(1)">›</button>
     </div>
-    <div class="calendar">
+    <div class="calendar schedule-calendar">
       <div class="calendar-grid">
         <div v-for="day in ['ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ', 'ВС']" :key="day" class="weekday">{{ day }}</div>
         <button v-for="item in days" :key="item.value" class="day" :class="{ other: !item.current, selected: item.value === selected }" type="button" @click="selectDay(item)">{{ item.date.getDate() }}</button>

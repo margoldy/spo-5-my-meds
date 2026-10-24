@@ -29,7 +29,7 @@ const pages = {
 }
 
 const currentPage = computed(() => pages[state.page] || CalendarPage)
-const hasNavigation = computed(() => state.phase === 'app' && ['calendar', 'courses', 'catalog', 'settings'].includes(state.page))
+const hasNavigation = computed(() => state.phase === 'app' && ['calendar', 'courses', 'history', 'settings'].includes(state.page))
 
 onMounted(bootstrap)
 </script>

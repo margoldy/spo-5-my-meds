@@ -83,13 +83,17 @@ function closeGuest() {
   state.page = 'calendar'
 }
 
+function closeCatalog() {
+  if (guest.value) closeGuest()
+  else go(['calendar', 'courses', 'history', 'settings'].includes(state.previousPage) ? state.previousPage : 'courses')
+}
+
 onMounted(refresh)
 </script>
 
 <template>
-  <section class="screen" :class="{ 'no-nav guest-screen': guest }">
-    <AppHeader v-if="guest" title="Справочник" back @back="closeGuest" />
-    <h1 v-else class="title">Справочник</h1>
+  <section class="screen no-nav" :class="{ 'guest-screen': guest }">
+    <AppHeader title="Справочник" back @back="closeCatalog" />
     <div class="search-box">
       <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
       <input v-model.trim="search" class="search" placeholder="Название или действующее вещество" @input="delayedRefresh">
