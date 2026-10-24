@@ -16,6 +16,7 @@ const admin = computed(() => state.user?.role === 'admin')
 const guest = computed(() => state.phase === 'guest')
 const categories = computed(() => [...new Set(state.catalog.map(item => item.category).filter(Boolean))].sort())
 const forms = computed(() => [...new Set(state.catalog.map(item => item.form).filter(Boolean))].sort())
+const hasFilters = computed(() => Boolean(search.value || category.value || medicationForm.value))
 const form = reactive({ name: '', internationalName: '', manufacturer: '', category: '', instructionUrl: '', form: '', strength: '', isActive: true })
 let searchTimer
 
@@ -30,6 +31,13 @@ async function refresh() {
 function delayedRefresh() {
   clearTimeout(searchTimer)
   searchTimer = setTimeout(refresh, 300)
+}
+
+function clearFilters() {
+  search.value = ''
+  category.value = ''
+  medicationForm.value = ''
+  refresh()
 }
 
 function addToCourses(item) {
@@ -79,27 +87,42 @@ onMounted(refresh)
 </script>
 
 <template>
-  <section class="screen" :class="{ 'no-nav': guest }">
+  <section class="screen" :class="{ 'no-nav guest-screen': guest }">
     <AppHeader v-if="guest" title="Справочник" back @back="closeGuest" />
     <h1 v-else class="title">Справочник</h1>
-    <input v-model.trim="search" class="search" placeholder="Найти лекарство..." @input="delayedRefresh">
-    <div class="filter-row">
-      <select v-model="category" @change="refresh"><option value="">Все категории</option><option v-for="item in categories" :key="item">{{ item }}</option></select>
-      <select v-model="medicationForm" @change="refresh"><option value="">Все формы</option><option v-for="item in forms" :key="item">{{ item }}</option></select>
+    <div class="search-box">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
+      <input v-model.trim="search" class="search" placeholder="Название или действующее вещество" @input="delayedRefresh">
+      <button v-if="search" type="button" aria-label="Очистить поиск" @click="search = ''; refresh()">×</button>
     </div>
-    <button v-if="admin" class="secondary-button admin-add" type="button" @click="openAdmin()">+ Добавить в справочник</button>
+    <div class="filter-panel">
+      <label><span>Категория</span><select v-model="category" @change="refresh"><option value="">Все</option><option v-for="item in categories" :key="item">{{ item }}</option></select></label>
+      <label><span>Форма выпуска</span><select v-model="medicationForm" @change="refresh"><option value="">Все</option><option v-for="item in forms" :key="item">{{ item }}</option></select></label>
+    </div>
+    <div class="catalog-summary">
+      <span>{{ state.catalog.length ? `Найдено: ${state.catalog.length}` : 'Результатов нет' }}</span>
+      <button v-if="hasFilters" type="button" @click="clearFilters">Сбросить</button>
+    </div>
+    <button v-if="admin" class="secondary-button admin-add" type="button" @click="openAdmin()"><span>＋</span> Добавить лекарство</button>
     <div class="catalog-list">
       <article v-for="item in state.catalog" :key="item.id" class="catalog-row" :class="{ inactive: !item.is_active }">
         <button class="catalog-main" type="button" @click="selected = item">
-          <strong>{{ item.name }}<template v-if="item.international_name"> ({{ item.international_name }})</template></strong>
-          <small v-if="item.strength">{{ item.strength }}</small>
+          <strong>{{ item.name }}</strong>
+          <small v-if="item.international_name">{{ item.international_name }}</small>
+          <span class="catalog-meta"><i v-if="item.form">{{ item.form }}</i><i v-if="item.strength">{{ item.strength }}</i></span>
         </button>
+        <span v-if="!admin" class="row-arrow">›</span>
         <button v-if="admin" class="mini-button" type="button" aria-label="Изменить" @click="openAdmin(item)">✎</button>
       </article>
-      <EmptyState v-if="!state.catalog.length" :text="search ? 'Ничего не найдено' : 'Справочник пока пуст'" />
+      <EmptyState
+        v-if="!state.catalog.length"
+        :title="hasFilters ? 'Ничего не найдено' : 'Справочник пуст'"
+        :action="hasFilters ? 'Сбросить фильтры' : ''"
+        @action="clearFilters"
+      />
     </div>
   </section>
-  <button v-if="guest" class="guest-bottom" type="button" @click="closeGuest">Войти</button>
+  <button v-if="guest" class="guest-bottom" type="button" @click="closeGuest">Войти в «Мою аптечку»</button>
   <AppModal v-if="selected" title="Информация о лекарстве" @close="selected = null">
     <div class="medication-detail">
       <h3 class="medicine-name">{{ selected.name }}</h3>
@@ -117,13 +140,26 @@ onMounted(refresh)
   </AppModal>
   <AppModal v-if="adminModal" :title="editingId ? 'Изменить лекарство' : 'Новое лекарство'" @close="adminModal = false">
     <form class="admin-form" @submit.prevent="submitAdmin">
-      <input v-model.trim="form.name" class="detail-field" required placeholder="Название">
-      <input v-model.trim="form.internationalName" class="detail-field" placeholder="Международное название">
-      <input v-model.trim="form.manufacturer" class="detail-field" placeholder="Производитель">
-      <input v-model.trim="form.category" class="detail-field" placeholder="Категория">
-      <input v-model.trim="form.form" class="detail-field" placeholder="Форма">
-      <input v-model.trim="form.strength" class="detail-field" placeholder="Дозировка">
-      <input v-model.trim="form.instructionUrl" class="detail-field" type="url" placeholder="Ссылка на инструкцию">
+      <div class="form-section">
+        <div class="form-section-heading"><span class="section-kicker">Основное</span><strong>Название и группа</strong></div>
+        <label class="field-label">Название</label>
+        <input v-model.trim="form.name" class="detail-field" required placeholder="Например, Маалокс">
+        <label class="field-label">Международное название</label>
+        <input v-model.trim="form.internationalName" class="detail-field" placeholder="Действующее вещество">
+        <label class="field-label">Категория</label>
+        <input v-model.trim="form.category" class="detail-field" placeholder="Например, антацид">
+      </div>
+      <div class="form-section">
+        <div class="form-section-heading"><span class="section-kicker">Описание</span><strong>Форма и дозировка</strong></div>
+        <label class="field-label">Производитель</label>
+        <input v-model.trim="form.manufacturer" class="detail-field" placeholder="Название производителя">
+        <div class="two-columns">
+          <label>Форма<input v-model.trim="form.form" class="detail-field" placeholder="Таблетки"></label>
+          <label>Дозировка<input v-model.trim="form.strength" class="detail-field" placeholder="500 мг"></label>
+        </div>
+        <label class="field-label">Инструкция</label>
+        <input v-model.trim="form.instructionUrl" class="detail-field" type="url" placeholder="https://...">
+      </div>
       <label v-if="editingId" class="toggle-row"><span>Опубликовано</span><input v-model="form.isActive" type="checkbox"></label>
       <div class="modal-actions"><button class="action-button" type="button" @click="adminModal = false">Отмена</button><button class="action-button primary" type="submit">Сохранить</button></div>
     </form>

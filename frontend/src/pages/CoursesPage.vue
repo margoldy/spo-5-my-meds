@@ -48,7 +48,12 @@ onMounted(async () => {
           <span>Начало: {{ formatDate(course.start_date) }}<br v-if="course.end_date">{{ course.end_date ? `Конец: ${formatDate(course.end_date)}` : '' }}</span>
         </div>
       </article>
-      <EmptyState v-if="!filtered.length" :text="query ? 'Ничего не найдено' : 'Курсов пока нет'" />
+      <EmptyState
+        v-if="!filtered.length"
+        :title="query ? 'Ничего не найдено' : 'Лекарств нет'"
+        :action="query ? '' : 'Добавить лекарство'"
+        @action="addCourse"
+      />
     </div>
   </section>
   <button class="floating-button" type="button" aria-label="Добавить лекарство" @click="addCourse">+</button>

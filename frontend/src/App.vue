@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted } from 'vue'
+import temporaryLogo from './assets/temporary-logo.png'
 import BottomNav from './components/ui/BottomNav.vue'
 import AuthPage from './pages/AuthPage.vue'
 import CalendarPage from './pages/CalendarPage.vue'
@@ -36,7 +37,7 @@ onMounted(bootstrap)
 <template>
   <main class="phone">
     <div v-if="state.phase === 'loading'" class="loading-screen">
-      <div class="brand-mark"><span></span></div>
+      <img class="brand-logo" :src="temporaryLogo" alt="">
       <p>Загрузка...</p>
     </div>
     <AuthPage v-else-if="state.phase === 'auth'" />

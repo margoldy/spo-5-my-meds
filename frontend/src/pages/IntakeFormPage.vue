@@ -72,12 +72,12 @@ onMounted(async () => {
   <section class="screen no-nav">
     <AppHeader :title="editing ? 'Изменить приём' : 'Внеплановый приём'" back @back="go(editing ? 'history' : 'calendar')" />
     <form @submit.prevent="submit">
-      <template v-if="!editing">
-        <label class="field-label">Что принято</label>
-        <select v-model="mode" class="detail-field">
-          <option value="course">Лекарство из моего курса</option>
-          <option value="other">Другое лекарство</option>
-        </select>
+      <div v-if="!editing" class="form-section">
+        <div class="form-section-heading"><span class="section-kicker">Лекарство</span><strong>Что вы приняли?</strong></div>
+        <div class="segmented-control">
+          <button type="button" :class="{ active: mode === 'course' }" @click="mode = 'course'">Из моего курса</button>
+          <button type="button" :class="{ active: mode === 'other' }" @click="mode = 'other'">Другое</button>
+        </div>
         <template v-if="mode === 'course'">
           <label class="field-label">Курс</label>
           <select v-model="form.courseId" class="detail-field" required @change="useCourse">
@@ -86,11 +86,11 @@ onMounted(async () => {
           </select>
         </template>
         <template v-else>
-          <label class="field-label">Источник</label>
-          <select v-model="otherSource" class="detail-field">
-            <option value="catalog">Из справочника</option>
-            <option value="custom">Вписать самостоятельно</option>
-          </select>
+          <label class="field-label">Где найти название</label>
+          <div class="segmented-control compact">
+            <button type="button" :class="{ active: otherSource === 'catalog' }" @click="otherSource = 'catalog'">Справочник</button>
+            <button type="button" :class="{ active: otherSource === 'custom' }" @click="otherSource = 'custom'">Ввести самой</button>
+          </div>
           <template v-if="otherSource === 'catalog'">
             <label class="field-label">Лекарство</label>
             <select v-model="form.medicationId" class="detail-field" required @change="useMedication">
@@ -100,20 +100,23 @@ onMounted(async () => {
           </template>
           <template v-else>
             <label class="field-label">Название</label>
-            <input v-model.trim="form.medicationName" class="detail-field" required>
+            <input v-model.trim="form.medicationName" class="detail-field" required placeholder="Название лекарства">
           </template>
         </template>
-      </template>
-      <template v-else>
-        <label class="field-label">Название</label>
-        <input v-model.trim="form.medicationName" class="detail-field" required>
-      </template>
-      <div class="dose-row">
-        <label>Количество<input v-model.number="form.amount" class="detail-field" type="number" min="0.01" step="0.01" required></label>
-        <label>Единица<input v-model.trim="form.unit" class="detail-field" required placeholder="мг"></label>
       </div>
-      <label class="field-label">Дата и время</label>
-      <input v-model="form.takenAt" class="detail-field" type="datetime-local" required>
+      <div v-else class="form-section">
+        <div class="form-section-heading"><span class="section-kicker">Лекарство</span><strong>Название</strong></div>
+        <input v-model.trim="form.medicationName" class="detail-field" required>
+      </div>
+      <div class="form-section">
+        <div class="form-section-heading"><span class="section-kicker">Приём</span><strong>Сколько и когда?</strong></div>
+        <div class="dose-row">
+          <label>Количество<input v-model.number="form.amount" class="detail-field" type="number" min="0.01" step="0.01" required></label>
+          <label>Единица<input v-model.trim="form.unit" class="detail-field" required placeholder="мг"></label>
+        </div>
+        <label class="field-label">Дата и время</label>
+        <input v-model="form.takenAt" class="detail-field" type="datetime-local" required>
+      </div>
       <button class="primary-button form-submit" type="submit">{{ editing ? 'Сохранить изменения' : 'Записать приём' }}</button>
     </form>
   </section>

@@ -51,12 +51,12 @@ async function forget() {
       <img v-if="state.user?.avatar_url" class="avatar image-avatar" :src="state.user.avatar_url" alt="">
       <span v-else class="avatar">{{ initials }}</span>
       <span><strong>{{ state.user?.name || 'Без имени' }}</strong><small>{{ state.user?.email }}</small></span>
-      <span>›</span>
+      <span class="row-arrow">›</span>
     </button>
     <section class="settings-section">
-      <h2 class="section-title">Напоминания</h2>
+      <div class="form-section-heading"><span class="section-kicker">Расписание</span><strong>Напоминания</strong></div>
       <label class="toggle-row">
-        <span>Уведомления</span>
+        <span><strong>Уведомления</strong><small>Напоминать о ближайшем приёме</small></span>
         <input :checked="state.preferences.notifications && notificationAllowed" type="checkbox" @change="changeNotifications($event.target.checked)">
       </label>
       <label class="field-label">За сколько минут</label>
@@ -68,11 +68,12 @@ async function forget() {
         <option :value="60">1 час</option>
       </select>
     </section>
+    <span class="menu-caption">Данные и безопасность</span>
     <div class="menu-list">
-      <button type="button" @click="go('history')"><span>История приёмов</span><span>›</span></button>
-      <button type="button" @click="passwordModal = true"><span>Изменить пароль шифрования</span><span>›</span></button>
-      <button type="button" @click="forget"><span>Забыть это устройство</span><span>›</span></button>
-      <button class="danger-text" type="button" @click="logout"><span>Выйти</span><span>›</span></button>
+      <button type="button" @click="go('history')"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.3-5.7L4 8.6M4 4v4.6h4.6M12 7.5V12l3 2"/></svg></span><span class="menu-copy"><strong>История приёмов</strong><small>Все записи</small></span><span class="row-arrow">›</span></button>
+      <button type="button" @click="passwordModal = true"><span class="menu-icon"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"/></svg></span><span class="menu-copy"><strong>Пароль шифрования</strong><small>Изменить пароль</small></span><span class="row-arrow">›</span></button>
+      <button type="button" @click="forget"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M5 8a8 8 0 1 1-1 7M5 8V3M5 8h5"/></svg></span><span class="menu-copy"><strong>Забыть устройство</strong><small>Удалить локальный ключ</small></span><span class="row-arrow">›</span></button>
+      <button class="danger-text" type="button" @click="logout"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9"/></svg></span><span class="menu-copy"><strong>Выйти</strong></span><span class="row-arrow">›</span></button>
     </div>
   </section>
   <AppModal v-if="passwordModal" title="Пароль шифрования" @close="passwordModal = false">

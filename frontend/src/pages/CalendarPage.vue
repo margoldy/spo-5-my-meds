@@ -66,7 +66,7 @@ onMounted(refresh)
       </div>
     </div>
     <button class="inline-action" type="button" @click="openUnplanned">+ Внеплановый приём</button>
-    <EmptyState v-if="!groupedItems.length" text="На этот день приёмов нет" />
+    <EmptyState v-if="!groupedItems.length" title="Приёмов нет" action="Записать внеплановый приём" @action="openUnplanned" />
     <section v-for="item in groupedItems" :key="item.schedule_id" class="time-group">
       <h2 class="time-label">{{ item.planned_at.slice(11, 16) }}</h2>
       <article class="intake-card">

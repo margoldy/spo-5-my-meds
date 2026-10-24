@@ -92,25 +92,30 @@ watch(course, fillForm, { immediate: true })
   <section v-if="course" class="screen no-nav">
     <AppHeader title="Информация о лекарстве" back @back="go('courses')" />
     <form v-if="editing" @submit.prevent="saveDetails">
-      <label class="field-label">Название</label>
-      <input v-model.trim="form.name" class="detail-field" required>
-      <div class="two-columns">
-        <label>Начало<input v-model="form.startDate" class="detail-field" type="date" required></label>
-        <label>Конец<input v-model="form.endDate" class="detail-field" type="date" :min="form.startDate"></label>
+      <div class="form-section">
+        <div class="form-section-heading"><span class="section-kicker">Курс</span><strong>Основные данные</strong></div>
+        <label class="field-label">Название</label>
+        <input v-model.trim="form.name" class="detail-field" required>
+        <div class="two-columns">
+          <label>Начало<input v-model="form.startDate" class="detail-field" type="date" required></label>
+          <label>Конец<input v-model="form.endDate" class="detail-field" type="date" :min="form.startDate"></label>
+        </div>
+        <label class="field-label">Заметки</label>
+        <textarea v-model="form.notes" class="notes"></textarea>
       </div>
-      <label class="field-label">Заметки</label>
-      <textarea v-model="form.notes" class="notes"></textarea>
-      <label class="toggle-row"><span>Курс активен</span><input v-model="form.isActive" type="checkbox"></label>
+      <label class="toggle-row"><span><strong>Курс активен</strong><small>Показывать в календаре</small></span><input v-model="form.isActive" type="checkbox"></label>
       <div class="button-row"><button class="secondary-button" type="button" @click="editing = false; fillForm()">Отмена</button><button class="primary-button" type="submit">Сохранить</button></div>
     </form>
     <template v-else>
-      <label class="field-label">Название</label>
-      <div class="read-field">{{ course.name }}</div>
-      <h2 class="section-title">Курс</h2>
-      <div class="detail-card info-grid">
+      <div class="course-detail-hero">
+        <span class="section-kicker">Лекарство</span>
+        <h2>{{ course.name }}</h2>
+        <span class="badge" :class="{ inactive: !course.is_active }">{{ course.is_active ? 'Активный курс' : 'Курс завершён' }}</span>
+      </div>
+      <h2 class="section-title">Период курса</h2>
+      <div class="detail-card info-grid course-period">
         <span class="info-label">Начало</span><span>{{ formatDate(course.start_date) }}</span>
         <span class="info-label">Конец</span><span>{{ formatDate(course.end_date) }}</span>
-        <span class="info-label">Состояние</span><span>{{ course.is_active ? 'Активен' : 'Завершён' }}</span>
       </div>
       <h2 class="section-title">Расписание</h2>
       <div v-if="course.schedules.length" class="schedule-list">
@@ -119,8 +124,8 @@ watch(course, fillForm, { immediate: true })
           <button class="mini-button danger" type="button" aria-label="Удалить расписание" @click="deleteScheduleItem(item.id)">×</button>
         </div>
       </div>
-      <div v-else class="detail-card compact-text">Приём по необходимости</div>
-      <button class="secondary-button" type="button" @click="openSchedule()">+ Добавить время</button>
+      <div v-else class="as-needed-note"><strong>По необходимости</strong><span>Без расписания</span></div>
+      <button class="secondary-button add-time-button" type="button" @click="openSchedule()">＋ Добавить время</button>
       <h2 class="section-title detail-section">Заметки</h2>
       <div class="read-field notes-view">{{ course.notes || 'Нет заметок' }}</div>
       <div class="menu-list detail-actions">
