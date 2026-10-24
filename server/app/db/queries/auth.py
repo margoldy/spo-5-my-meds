@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta, timezone
 import hashlib
+import hmac
 
 from sqlalchemy import and_, desc, select, update
 from sqlalchemy.orm import Session
@@ -29,14 +30,13 @@ class AuthQueries:
         self.db.flush()
         return row
 
-    def get_valid_code(self, *, email: str, code: str) -> AuthCode | None:
+    def get_latest_active(self, *, email: str) -> AuthCode | None:
         now = datetime.now(timezone.utc)
         stmt = (
             select(AuthCode)
             .where(
                 and_(
                     AuthCode.email == email,
-                    AuthCode.code_hash == self._hash_code(code),
                     AuthCode.used_at.is_(None),
                     AuthCode.expires_at > now,
                 )
@@ -46,7 +46,16 @@ class AuthQueries:
         )
         return self.db.execute(stmt).scalar_one_or_none()
 
-    def use_code(self, row: AuthCode) -> None:
+    def code_matches(self, *, row: AuthCode, code: str) -> bool:
+        return hmac.compare_digest(row.code_hash, self._hash_code(code))
+
+    def add_failed_attempt(self, *, row: AuthCode, max_attempts: int = 5) -> None:
+        row.attempts += 1
+        if row.attempts >= max_attempts:
+            row.used_at = datetime.now(timezone.utc)
+        self.db.flush()
+
+    def use_code(self, *, row: AuthCode) -> None:
         row.used_at = datetime.now(timezone.utc)
         self.db.flush()
 

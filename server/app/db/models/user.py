@@ -2,7 +2,7 @@ from datetime import date, datetime
 from enum import Enum
 import uuid
 
-from sqlalchemy import Date, DateTime, Enum as SqlEnum, String, func
+from sqlalchemy import Date, DateTime, Enum as SqlEnum, String, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -46,6 +46,13 @@ class User(Base):
         server_default=func.now(),
     )
     avatar_url: Mapped[str | None] = mapped_column(String(2048), nullable=True)
+    timezone: Mapped[str] = mapped_column(
+        String(64),
+        nullable=False,
+        default="Europe/Moscow",
+        server_default="Europe/Moscow",
+    )
+    encrypted_dek: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     courses: Mapped[list["Course"]] = relationship(
         back_populates="user",

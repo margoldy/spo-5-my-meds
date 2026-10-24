@@ -1,0 +1,146 @@
+<script setup>
+import { computed, reactive, ref, watch } from 'vue'
+import AppHeader from '../components/ui/AppHeader.vue'
+import AppModal from '../components/ui/AppModal.vue'
+import TimeInput from '../components/ui/TimeInput.vue'
+import { daysText, formatDate } from '../utils/date'
+import { addSchedule, editCourse, editSchedule, go, removeCourse, removeSchedule, showError } from '../store/store'
+import { state } from '../store/state'
+
+const course = computed(() => state.courses.find(item => item.id === state.selectedCourseId))
+const editing = ref(false)
+const scheduleModal = ref(false)
+const scheduleId = ref(null)
+const form = reactive({ name: '', medicationId: null, notes: '', startDate: '', endDate: '', isActive: true })
+const schedule = reactive({ time: '09:00', amount: 1, unit: 'таблетка', days: [1, 2, 3, 4, 5, 6, 7] })
+
+function fillForm() {
+  if (!course.value) return
+  Object.assign(form, {
+    name: course.value.name,
+    medicationId: course.value.medicationId,
+    notes: course.value.notes,
+    startDate: course.value.start_date,
+    endDate: course.value.end_date || '',
+    isActive: course.value.is_active,
+  })
+}
+
+function openSchedule(item = null) {
+  scheduleId.value = item?.id || null
+  Object.assign(schedule, item ? {
+    time: item.time,
+    amount: item.amount,
+    unit: item.unit,
+    days: [...item.days_of_week],
+  } : { time: '09:00', amount: 1, unit: 'таблетка', days: [1, 2, 3, 4, 5, 6, 7] })
+  scheduleModal.value = true
+}
+
+function toggleDay(day) {
+  if (schedule.days.includes(day)) schedule.days = schedule.days.filter(item => item !== day)
+  else schedule.days = [...schedule.days, day].sort()
+}
+
+async function saveDetails() {
+  try {
+    await editCourse(course.value.id, form)
+    editing.value = false
+  } catch (error) {
+    showError(error)
+  }
+}
+
+async function saveSchedule() {
+  try {
+    if (!schedule.days.length) throw new Error('Выберите хотя бы один день')
+    if (scheduleId.value) await editSchedule(scheduleId.value, schedule)
+    else await addSchedule(course.value.id, schedule)
+    scheduleModal.value = false
+  } catch (error) {
+    showError(error)
+  }
+}
+
+async function deleteScheduleItem(id) {
+  if (!confirm('Удалить это время приёма?')) return
+  try {
+    await removeSchedule(id)
+  } catch (error) {
+    showError(error)
+  }
+}
+
+async function deleteCurrentCourse() {
+  if (!confirm('Удалить курс и его расписание?')) return
+  try {
+    await removeCourse(course.value.id)
+    go('courses')
+  } catch (error) {
+    showError(error)
+  }
+}
+
+function openHistory() {
+  go('history')
+}
+
+watch(course, fillForm, { immediate: true })
+</script>
+
+<template>
+  <section v-if="course" class="screen no-nav">
+    <AppHeader title="Информация о лекарстве" back @back="go('courses')" />
+    <form v-if="editing" @submit.prevent="saveDetails">
+      <label class="field-label">Название</label>
+      <input v-model.trim="form.name" class="detail-field" required>
+      <div class="two-columns">
+        <label>Начало<input v-model="form.startDate" class="detail-field" type="date" required></label>
+        <label>Конец<input v-model="form.endDate" class="detail-field" type="date" :min="form.startDate"></label>
+      </div>
+      <label class="field-label">Заметки</label>
+      <textarea v-model="form.notes" class="notes"></textarea>
+      <label class="toggle-row"><span>Курс активен</span><input v-model="form.isActive" type="checkbox"></label>
+      <div class="button-row"><button class="secondary-button" type="button" @click="editing = false; fillForm()">Отмена</button><button class="primary-button" type="submit">Сохранить</button></div>
+    </form>
+    <template v-else>
+      <label class="field-label">Название</label>
+      <div class="read-field">{{ course.name }}</div>
+      <h2 class="section-title">Курс</h2>
+      <div class="detail-card info-grid">
+        <span class="info-label">Начало</span><span>{{ formatDate(course.start_date) }}</span>
+        <span class="info-label">Конец</span><span>{{ formatDate(course.end_date) }}</span>
+        <span class="info-label">Состояние</span><span>{{ course.is_active ? 'Активен' : 'Завершён' }}</span>
+      </div>
+      <h2 class="section-title">Расписание</h2>
+      <div v-if="course.schedules.length" class="schedule-list">
+        <div v-for="item in course.schedules" :key="item.id" class="schedule-row">
+          <button class="schedule-main" type="button" @click="openSchedule(item)"><strong>{{ item.time }} — {{ item.amount }} {{ item.unit }}</strong><span>{{ daysText(item.days_of_week) }}</span></button>
+          <button class="mini-button danger" type="button" aria-label="Удалить расписание" @click="deleteScheduleItem(item.id)">×</button>
+        </div>
+      </div>
+      <div v-else class="detail-card compact-text">Приём по необходимости</div>
+      <button class="secondary-button" type="button" @click="openSchedule()">+ Добавить время</button>
+      <h2 class="section-title detail-section">Заметки</h2>
+      <div class="read-field notes-view">{{ course.notes || 'Нет заметок' }}</div>
+      <div class="menu-list detail-actions">
+        <button type="button" @click="editing = true"><span>Изменить курс</span><span>›</span></button>
+        <button type="button" @click="openHistory"><span>История приёмов</span><span>›</span></button>
+        <button class="danger-text" type="button" @click="deleteCurrentCourse"><span>Удалить курс</span><span>×</span></button>
+      </div>
+    </template>
+  </section>
+  <AppModal v-if="scheduleModal" :title="scheduleId ? 'Изменить время' : 'Добавить время'" @close="scheduleModal = false">
+    <form @submit.prevent="saveSchedule">
+      <TimeInput v-model="schedule.time" />
+      <div class="dose-row">
+        <label>Количество<input v-model.number="schedule.amount" class="detail-field" type="number" min="0.01" step="0.01" required></label>
+        <label>Единица<input v-model.trim="schedule.unit" class="detail-field" required></label>
+      </div>
+      <div class="weekdays">
+        <button v-for="(day, index) in ['Пн','Вт','Ср','Чт','Пт','Сб','Вс']" :key="day" type="button" :class="{ selected: schedule.days.includes(index + 1) }" @click="toggleDay(index + 1)">{{ day }}</button>
+      </div>
+      <div class="modal-actions"><button class="action-button" type="button" @click="scheduleModal = false">Отмена</button><button class="action-button primary" type="submit">Сохранить</button></div>
+    </form>
+  </AppModal>
+</template>

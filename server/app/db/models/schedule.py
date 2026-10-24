@@ -1,8 +1,7 @@
 from datetime import time
-from decimal import Decimal
 import uuid
 
-from sqlalchemy import CheckConstraint, ForeignKey, Index, Numeric, SmallInteger, String, Time
+from sqlalchemy import CheckConstraint, ForeignKey, Index, SmallInteger, Text, Time
 from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -17,8 +16,7 @@ class Schedule(Base):
             "days_of_week <@ ARRAY[1, 2, 3, 4, 5, 6, 7]::smallint[]",
             name="ck_schedule_day_range",
         ),
-        CheckConstraint("dose_amount > 0", name="ck_schedule_dose"),
-        CheckConstraint("btrim(dose_unit) <> ''", name="ck_schedule_unit"),
+        CheckConstraint("btrim(encrypted_data) <> ''", name="ck_schedule_data"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -28,9 +26,8 @@ class Schedule(Base):
         ForeignKey("courses.id", ondelete="CASCADE"), nullable=False
     )
     scheduled_at: Mapped[time] = mapped_column(Time, nullable=False)
-    dose_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-    dose_unit: Mapped[str] = mapped_column(String(50), nullable=False)
     days_of_week: Mapped[list[int]] = mapped_column(ARRAY(SmallInteger), nullable=False)
+    encrypted_data: Mapped[str] = mapped_column(Text, nullable=False)
 
     course: Mapped["Course"] = relationship(back_populates="schedules")
     intakes: Mapped[list["Intake"]] = relationship(

@@ -8,7 +8,6 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     Index,
-    String,
     Text,
     func,
 )
@@ -21,25 +20,14 @@ from app.db.models.base import Base
 class Course(Base):
     __tablename__ = "courses"
     __table_args__ = (
-        CheckConstraint(
-            "num_nonnulls(medication_id, custom_name) = 1",
-            name="ck_course_name",
-        ),
-        CheckConstraint(
-            "end_date >= start_date",
-            name="ck_course_dates",
-        ),
+        CheckConstraint("end_date IS NULL OR end_date >= start_date", name="ck_course_dates"),
+        CheckConstraint("btrim(encrypted_data) <> ''", name="ck_course_data"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         primary_key=True,
         default=uuid.uuid4,
-    )
-    custom_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    medication_id: Mapped[int | None] = mapped_column(
-        ForeignKey("medications.id", ondelete="SET NULL"),
-        nullable=True,
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
         ForeignKey("users.id", ondelete="CASCADE"),
@@ -53,7 +41,7 @@ class Course(Base):
         default=True,
         server_default="true",
     )
-    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    encrypted_data: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
@@ -61,7 +49,6 @@ class Course(Base):
     )
 
     user: Mapped["User"] = relationship(back_populates="courses")
-    medication: Mapped["Medication | None"] = relationship(back_populates="courses")
     schedules: Mapped[list["Schedule"]] = relationship(
         back_populates="course",
         cascade="all, delete-orphan",
@@ -72,6 +59,9 @@ class Course(Base):
         passive_deletes=True,
     )
 
+    @property
+    def taking_mode(self) -> str:
+        return "scheduled" if self.schedules else "as_needed"
+
 
 Index("idx_courses_user_id", Course.user_id)
-Index("idx_courses_medication_id", Course.medication_id)

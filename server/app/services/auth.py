@@ -1,4 +1,5 @@
 import secrets
+from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
@@ -17,37 +18,45 @@ mail_sender = send_auth_code
 
 
 def generate_code() -> str:
-    return f"67{secrets.randbelow(10_000):04d}"
+    return f"{secrets.randbelow(900_000) + 100_000:06d}"
 
 
 class AuthService:
     def __init__(self, db: Session) -> None:
-        self.auth_queries = AuthQueries(db)
-        self.users_queries = UsersQueries(db)
+        self.q_a = AuthQueries(db)
+        self.q_u = UsersQueries(db)
 
     def request_code(self, *, email: str) -> None:
         normalized_email = email.strip().lower()
+        latest = self.q_a.get_latest_active(email=normalized_email)
+        if latest is not None:
+            seconds = (datetime.now(timezone.utc) - latest.created_at).total_seconds()
+            if seconds < 60:
+                raise ValueError("Повторный код можно запросить через минуту")
+
         code = generate_code()
-        self.auth_queries.create_code(email=normalized_email, code=code)
+        self.q_a.create_code(email=normalized_email, code=code)
         mail_sender(normalized_email, code)
 
     def verify_code(self, *, email: str, code: str) -> tuple[str, str, User]:
         normalized_email = email.strip().lower()
-        row = self.auth_queries.get_valid_code(email=normalized_email, code=code)
-        if row is None:
+        row = self.q_a.get_latest_active(email=normalized_email)
+        if row is None or not self.q_a.code_matches(row=row, code=code):
+            if row is not None:
+                self.q_a.add_failed_attempt(row=row)
             raise ValueError("Неверный или просроченный код")
 
-        self.auth_queries.use_code(row)
+        self.q_a.use_code(row=row)
 
-        user = self.users_queries.get_by_email(normalized_email)
+        user = self.q_u.get_by_email(email=normalized_email)
         if user is None:
-            user = self.users_queries.create(email=normalized_email)
+            user = self.q_u.create(email=normalized_email)
 
         return create_access_token(user.id), create_refresh_token(user.id), user
 
     def refresh_access_token(self, *, refresh_token: str) -> str:
         user_id = validate_refresh_token(refresh_token)
-        user = self.users_queries.get_by_id(user_id)
+        user = self.q_u.get_by_id(user_id=user_id)
         if user is None:
             raise ValueError("Пользователь не найден")
 

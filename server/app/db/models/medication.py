@@ -1,5 +1,5 @@
 from sqlalchemy import Boolean, Index, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.models.base import Base
 
@@ -27,8 +27,5 @@ class Medication(Base):
     )
     form: Mapped[str | None] = mapped_column(String(100), nullable=True)
     strength: Mapped[str | None] = mapped_column(String(100), nullable=True)
-
-    courses: Mapped[list["Course"]] = relationship(back_populates="medication")
-
 
 Index("idx_medications_name", Medication.name)

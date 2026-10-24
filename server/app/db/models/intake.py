@@ -1,8 +1,7 @@
 from datetime import datetime
-from decimal import Decimal
 import uuid
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, Numeric, String, func
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Index, Text, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -12,16 +11,11 @@ from app.db.models.base import Base
 class Intake(Base):
     __tablename__ = "intakes"
     __table_args__ = (
-        CheckConstraint("dose_amount > 0", name="ck_intake_dose"),
-        CheckConstraint("btrim(dose_unit) <> ''", name="ck_intake_unit"),
-        CheckConstraint(
-            "btrim(medication_name) <> ''",
-            name="ck_intake_name",
-        ),
         CheckConstraint(
             "schedule_id IS NULL OR course_id IS NOT NULL",
             name="ck_intake_schedule",
         ),
+        CheckConstraint("btrim(encrypted_data) <> ''", name="ck_intake_data"),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -39,9 +33,7 @@ class Intake(Base):
     taken_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
-    dose_amount: Mapped[Decimal] = mapped_column(Numeric(10, 2), nullable=False)
-    dose_unit: Mapped[str] = mapped_column(String(50), nullable=False)
-    medication_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    encrypted_data: Mapped[str] = mapped_column(Text, nullable=False)
 
     user: Mapped["User"] = relationship(back_populates="intakes")
     course: Mapped["Course | None"] = relationship(back_populates="intakes")
