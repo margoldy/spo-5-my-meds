@@ -326,6 +326,11 @@ export async function loadIntakes(filters = {}) {
   state.intakes = await Promise.all(result.items.map(mapIntake))
 }
 
+export async function loadCourseIntakes(courseId) {
+  const result = await intakesApi.getIntakes({ course_id: courseId })
+  state.courseIntakes = await Promise.all(result.items.map(mapIntake))
+}
+
 export async function editIntake(id, form) {
   await intakesApi.updateIntake(id, {
     taken_at: zonedDateTimeToIso(form.takenAt, state.user?.timezone),

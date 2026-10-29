@@ -69,6 +69,7 @@ async function forget() {
     </section>
     <span class="menu-caption">Данные и безопасность</span>
     <div class="menu-list">
+      <button type="button" @click="go('emergency-card')"><span class="menu-icon emergency-menu-icon"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/></svg></span><span class="menu-copy"><strong>Медицинская карточка</strong><small>Аллергии и активные лекарства</small></span><span class="row-arrow">›</span></button>
       <button type="button" @click="passwordModal = true"><span class="menu-icon"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"/></svg></span><span class="menu-copy"><strong>Пароль шифрования</strong><small>Изменить пароль</small></span><span class="row-arrow">›</span></button>
       <button type="button" @click="forget"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M5 8a8 8 0 1 1-1 7M5 8V3M5 8h5"/></svg></span><span class="menu-copy"><strong>Забыть устройство</strong><small>Удалить локальный ключ</small></span><span class="row-arrow">›</span></button>
       <button class="danger-text" type="button" @click="logout"><span class="menu-icon"><svg viewBox="0 0 24 24"><path d="M10 5H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h4M14 8l4 4-4 4M18 12H9"/></svg></span><span class="menu-copy"><strong>Выйти</strong></span><span class="row-arrow">›</span></button>

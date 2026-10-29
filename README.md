@@ -1,94 +1,69 @@
+<div align="center">
+
 # Моя аптечка
 
-Веб-приложение для ведения курсов лекарств, расписания и истории приёмов. Пользователь входит по коду из письма, работает со справочником препаратов и может отмечать как запланированные, так и внеплановые приёмы. Медицинские данные шифруются на устройстве до отправки на сервер.
+Веб-приложение (на данный момент) для курсов лекарств, расписания и истории приёмов.
+
+[**Запустить локально**](docs/local-setup.md) · [Документация](docs/README.md) · [API](docs/backend/api.md)
+
+</div>
 
 ## Возможности
 
-- несколько времён и разные дни приёма внутри одного курса;
-- календарь приёмов и история с фильтрами;
-- внеплановый приём из курса, справочника или со своим названием;
-- поиск и фильтрация лекарств в справочнике;
-- вход по одноразовому коду и обновление сессии;
-- локальные напоминания и клиентское шифрование медицинских данных.
+- курсы с несколькими дозами, временем и днями недели;
+- календарь плановых и внеплановых приёмов;
+- история, статистика соблюдения курса и серии без пропусков;
+- справочник из 100 (пока что) препаратов с поиском и фильтрами;
+- локальный учёт остатка лекарства и медицинская карточка с аллергиями;
+- вход по коду из письма, обновляемая сессия и клиентское шифрование.
 
-## Скриншоты
+## Интерфейс
 
 <table>
   <tr>
-    <th>Календарь</th>
+    <th>Расписание</th>
     <th>Мои лекарства</th>
     <th>Справочник</th>
+  </tr>
+  <tr>
+    <td><img src="docs/frontend/screenshots/calendar.png" alt="Расписание приёмов" width="250"></td>
+    <td><img src="docs/frontend/screenshots/courses.png" alt="Список курсов" width="250"></td>
+    <td><img src="docs/frontend/screenshots/catalog.png" alt="Справочник лекарств" width="250"></td>
+  </tr>
+  <tr>
+    <th>Статистика</th>
+    <th>Медицинская карточка</th>
     <th>Настройки</th>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/calendar.png" alt="Календарь приёмов" width="210"></td>
-    <td><img src="docs/screenshots/courses.png" alt="Список курсов" width="210"></td>
-    <td><img src="docs/screenshots/catalog.png" alt="Справочник лекарств" width="210"></td>
-    <td><img src="docs/screenshots/settings.png" alt="Настройки" width="210"></td>
+    <td><img src="docs/frontend/screenshots/statistics.png" alt="Статистика соблюдения курса" width="250"></td>
+    <td><img src="docs/frontend/screenshots/emergency-card.png" alt="Экстренная медицинская карточка" width="250"></td>
+    <td><img src="docs/frontend/screenshots/settings.png" alt="Настройки приложения" width="250"></td>
   </tr>
 </table>
 
 ## Технологии
 
-- frontend: Vue 3, Vite;
-- backend: FastAPI, SQLAlchemy;
-- база данных: PostgreSQL.
+`Vue 3` · `Vite` · `FastAPI` · `SQLAlchemy` · `PostgreSQL`
 
-## Подготовка backend
+## Быстрые ссылки
 
-Нужны Python 3.13 и PostgreSQL. Создайте пустую базу данных, затем выполните:
+- [Полная настройка и локальный запуск](docs/local-setup.md)
+- [Настройки backend — `.env.example`](server/.env.example)
+- [Настройки frontend — `.env.example`](frontend/.env.example)
+- [Настройка backend](docs/backend/setup.md)
+- [Настройка frontend](docs/frontend/setup.md)
 
-```powershell
-cd server
-py -3.13 -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
-Copy-Item .env.example .env
-```
+## Документация
 
-В `server/.env` укажите подключение к PostgreSQL, секрет приложения и данные SMTP для отправки кодов. Название созданной базы должно совпадать с `DB_NAME`.
-
-Таблицы и начальные записи справочника создаются автоматически при запуске backend. Автосоздание не изменяет старую структуру уже существующих таблиц, поэтому после изменения моделей учебную базу нужно пересоздать. Таблицы также можно создать отдельно:
-
-```powershell
-python -m app.db.create_tables
-```
-
-## Подготовка frontend
-
-Нужны Node.js и npm. Перед первым запуском выполните:
-
-```powershell
-cd frontend
-npm install
-Copy-Item .env.example .env
-```
-
-В `frontend/.env` задаётся адрес backend без `/api/v1`:
-
-```env
-VITE_API_URL=http://127.0.0.1:8000
-```
-
-Для опубликованного frontend здесь должен быть публичный HTTPS-адрес backend. Переменная подставляется во время сборки, поэтому после её изменения frontend нужно перезапустить или собрать заново.
-
-## Запуск
-
-Backend запускается из папки `server` с активированным виртуальным окружением:
-
-```powershell
-python -m uvicorn app.main:app --reload
-```
-
-Frontend запускается в отдельном терминале из папки `frontend`:
-
-```powershell
-npm run dev
-```
-
-- приложение: <http://127.0.0.1:5173>
-- API: <http://127.0.0.1:8000>
-- документация API: <http://127.0.0.1:8000/docs>
+| Документ | Содержание |
+|---|---|
+| [Frontend](docs/frontend/overview.md) | Структура, состояние, хранение данных и работа с API |
+| [Правила предметной области](docs/backend/domain-rules.md) | Курсы, расписание, приёмы и локальные функции |
+| [Структура базы данных](docs/backend/database-design.md) | Назначение таблиц и причины хранения снимков приёмов |
+| [Шифрование](docs/frontend/encryption.md) | Клиентская схема, ключи и открытые поля |
+| [API](docs/backend/api.md) | Endpoints и форматы запросов |
+| [Серверная схема БД](docs/backend/diagrams/server.png) | Таблицы PostgreSQL и связи |
 
 ## Проверка
 
@@ -99,12 +74,3 @@ python -m pytest
 cd ..\frontend
 npm run build
 ```
-
-## Документация
-
-- [Подробный запуск backend](server/README.md)
-- [Правила предметной области](docs/domain-rules.md)
-- [Структура базы данных](docs/database-design.md)
-- [Шифрование медицинских данных](docs/encryption.md)
-- [Описание API](server/docs/api.md)
-

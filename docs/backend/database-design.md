@@ -1,6 +1,6 @@
 # Структура баз данных
 
-Схемы: [серверная](../server/docs/server_bd.drawio.png) и [локальная](../server/docs/local_bd.drawio.png).
+Схемы: [серверная](diagrams/server.png) и [локальная](diagrams/local.png).
 
 ## Назначение таблиц
 

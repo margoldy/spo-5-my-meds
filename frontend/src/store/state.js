@@ -16,6 +16,7 @@ export const state = reactive({
   courses: [],
   dayItems: [],
   intakes: [],
+  courseIntakes: [],
   selectedCourseId: null,
   selectedMedicationId: null,
   selectedIntakeId: null,

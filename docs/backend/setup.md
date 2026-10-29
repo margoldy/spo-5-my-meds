@@ -1,15 +1,4 @@
-# Backend «Моя аптечка»
-
-## Документация
-
-- [Правила предметной области](../docs/domain-rules.md)
-- [Структура баз данных и причины повторения полей](../docs/database-design.md)
-- [Шифрование медицинских данных](../docs/encryption.md)
-- [Описание API](docs/api.md)
-- [Серверная схема базы данных](docs/server_bd.drawio.png)
-- [Локальная схема базы данных](docs/local_bd.drawio.png)
-
-## Запуск
+# Настройка и запуск backend
 
 1. Перейдите в папку сервера:
 
@@ -31,9 +20,9 @@ py -3.13 -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-4. Создайте PostgreSQL-базу с именем из `aptechka_db`.
+4. Создайте PostgreSQL-базу с именем из `DB_NAME` (`aptechka_db` в примере).
 
-5. Создайте файл `.env` на основе `.env.example` и укажите данные.
+5. Создайте файл `.env` на основе [`.env.example`](../../server/.env.example) и укажите данные подключения к PostgreSQL, ключ подписи токенов и настройки SMTP.
 
 6. Создайте таблицы:
 

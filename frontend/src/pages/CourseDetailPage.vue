@@ -1,18 +1,38 @@
 <script setup>
-import { computed, reactive, ref, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import AppHeader from '../components/ui/AppHeader.vue'
 import AppModal from '../components/ui/AppModal.vue'
 import TimeInput from '../components/ui/TimeInput.vue'
 import { daysText, formatDate } from '../utils/date'
-import { addSchedule, editCourse, editSchedule, go, removeCourse, removeSchedule, showError } from '../store/store'
+import { addSchedule, editCourse, editSchedule, go, loadCourseIntakes, removeCourse, removeSchedule, showError, showToast } from '../store/store'
 import { state } from '../store/state'
+import { getCourseInventory, removeCourseInventory, saveCourseInventory } from '../utils/storage'
 
 const course = computed(() => state.courses.find(item => item.id === state.selectedCourseId))
 const editing = ref(false)
 const scheduleModal = ref(false)
+const inventoryModal = ref(false)
 const scheduleId = ref(null)
 const form = reactive({ name: '', medicationId: null, notes: '', startDate: '', endDate: '', isActive: true })
 const schedule = reactive({ time: '09:00', amount: 1, unit: 'таблетка', days: [1, 2, 3, 4, 5, 6, 7] })
+const inventory = ref(getCourseInventory(state.user?.id, state.selectedCourseId))
+const inventoryForm = reactive({ amount: 0, unit: 'таблетка' })
+
+const usedAmount = computed(() => {
+  if (!inventory.value) return 0
+  return state.courseIntakes
+    .filter(item => new Date(item.taken_at) >= new Date(inventory.value.countedAt))
+    .filter(item => item.unit.trim().toLowerCase() === inventory.value.unit.trim().toLowerCase())
+    .reduce((total, item) => total + Number(item.amount || 0), 0)
+})
+const remainingAmount = computed(() => Math.max(0, Number(inventory.value?.amount || 0) - usedAmount.value))
+const dailyAmount = computed(() => {
+  if (!course.value || !inventory.value) return 0
+  return course.value.schedules
+    .filter(item => item.unit.trim().toLowerCase() === inventory.value.unit.trim().toLowerCase())
+    .reduce((total, item) => total + Number(item.amount) * item.days_of_week.length / 7, 0)
+})
+const daysLeft = computed(() => dailyAmount.value ? Math.floor(remainingAmount.value / dailyAmount.value) : null)
 
 function fillForm() {
   if (!course.value) return
@@ -35,6 +55,31 @@ function openSchedule(item = null) {
     days: [...item.days_of_week],
   } : { time: '09:00', amount: 1, unit: 'таблетка', days: [1, 2, 3, 4, 5, 6, 7] })
   scheduleModal.value = true
+}
+
+function openInventory() {
+  inventoryForm.amount = inventory.value ? remainingAmount.value : 0
+  inventoryForm.unit = inventory.value?.unit || course.value?.schedules[0]?.unit || 'таблетка'
+  inventoryModal.value = true
+}
+
+function saveInventory() {
+  if (inventoryForm.amount < 0 || !inventoryForm.unit.trim()) return
+  inventory.value = {
+    amount: Number(inventoryForm.amount),
+    unit: inventoryForm.unit.trim(),
+    countedAt: new Date().toISOString(),
+  }
+  saveCourseInventory(state.user?.id, course.value.id, inventory.value)
+  inventoryModal.value = false
+  showToast('Остаток сохранён на устройстве')
+}
+
+function disableInventory() {
+  removeCourseInventory(state.user?.id, course.value.id)
+  inventory.value = null
+  inventoryModal.value = false
+  showToast('Учёт остатка отключён')
 }
 
 function toggleDay(day) {
@@ -86,6 +131,13 @@ function openHistory() {
 }
 
 watch(course, fillForm, { immediate: true })
+onMounted(async () => {
+  try {
+    await loadCourseIntakes(state.selectedCourseId)
+  } catch (error) {
+    showError(error)
+  }
+})
 </script>
 
 <template>
@@ -126,6 +178,13 @@ watch(course, fillForm, { immediate: true })
       </div>
       <div v-else class="as-needed-note"><strong>По необходимости</strong><span>Без расписания</span></div>
       <button class="secondary-button add-time-button" type="button" @click="openSchedule()">＋ Добавить время</button>
+      <h2 class="section-title detail-section">Остаток лекарства</h2>
+      <button v-if="inventory" class="inventory-card" type="button" @click="openInventory">
+        <span class="inventory-amount"><strong>{{ Number(remainingAmount.toFixed(2)) }}</strong><small>{{ inventory.unit }}</small></span>
+        <span class="inventory-copy"><strong>Сейчас в наличии</strong><small v-if="daysLeft !== null">Примерно на {{ daysLeft }} дн.</small><small v-else>Нажмите, чтобы изменить количество</small></span>
+        <span class="row-arrow">›</span>
+      </button>
+      <button v-else class="inventory-empty" type="button" @click="openInventory"><span>＋</span><div><strong>Указать остаток</strong><small>Количество будет храниться только на этом устройстве</small></div></button>
       <h2 class="section-title detail-section">Заметки</h2>
       <div class="read-field notes-view">{{ course.notes || 'Нет заметок' }}</div>
       <div class="menu-list detail-actions">
@@ -146,6 +205,17 @@ watch(course, fillForm, { immediate: true })
         <button v-for="(day, index) in ['Пн','Вт','Ср','Чт','Пт','Сб','Вс']" :key="day" type="button" :class="{ selected: schedule.days.includes(index + 1) }" @click="toggleDay(index + 1)">{{ day }}</button>
       </div>
       <div class="modal-actions"><button class="action-button" type="button" @click="scheduleModal = false">Отмена</button><button class="action-button primary" type="submit">Сохранить</button></div>
+    </form>
+  </AppModal>
+  <AppModal v-if="inventoryModal" title="Остаток лекарства" @close="inventoryModal = false">
+    <form @submit.prevent="saveInventory">
+      <p class="inventory-modal-note">Введите, сколько лекарства есть сейчас. После отмеченных приёмов остаток будет пересчитываться автоматически.</p>
+      <div class="dose-row">
+        <label>Количество<input v-model.number="inventoryForm.amount" class="detail-field" type="number" min="0" step="0.01" required></label>
+        <label>Единица<input v-model.trim="inventoryForm.unit" class="detail-field" required></label>
+      </div>
+      <button v-if="inventory" class="text-button inventory-remove" type="button" @click="disableInventory">Отключить учёт остатка</button>
+      <div class="modal-actions"><button class="action-button" type="button" @click="inventoryModal = false">Отмена</button><button class="action-button primary" type="submit">Сохранить</button></div>
     </form>
   </AppModal>
 </template>

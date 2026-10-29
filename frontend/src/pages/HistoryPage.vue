@@ -71,6 +71,11 @@ onMounted(refresh)
       <span>Архив приёмов</span>
       <h1 class="title">История</h1>
       <p>Выберите день, чтобы посмотреть записи</p>
+      <button class="progress-link" type="button" @click="go('progress')">
+        <span class="progress-link-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 19V11M12 19V5M19 19v-7"/></svg></span>
+        <span class="progress-link-copy"><strong>Статистика курсов</strong><small>Соблюдение, серии и пропуски</small></span>
+        <b>›</b>
+      </button>
     </div>
 
     <div class="history-filter">

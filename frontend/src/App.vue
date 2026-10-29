@@ -11,6 +11,8 @@ import CoursesPage from './pages/CoursesPage.vue'
 import EncryptionPage from './pages/EncryptionPage.vue'
 import HistoryPage from './pages/HistoryPage.vue'
 import IntakeFormPage from './pages/IntakeFormPage.vue'
+import ProgressPage from './pages/ProgressPage.vue'
+import EmergencyCardPage from './pages/EmergencyCardPage.vue'
 import ProfilePage from './pages/ProfilePage.vue'
 import SettingsPage from './pages/SettingsPage.vue'
 import { bootstrap, go } from './store/store'
@@ -24,6 +26,8 @@ const pages = {
   catalog: CatalogPage,
   'intake-form': IntakeFormPage,
   history: HistoryPage,
+  progress: ProgressPage,
+  'emergency-card': EmergencyCardPage,
   profile: ProfilePage,
   settings: SettingsPage,
 }
