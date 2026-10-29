@@ -1,0 +1,5 @@
+.venv/
+.venv.msys2-broken/
+__pycache__/
+*.py[cod]
+.env
