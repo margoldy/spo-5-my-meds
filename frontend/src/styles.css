@@ -1807,7 +1807,8 @@ select.detail-field {
   position: relative;
   width: 40px;
   height: 23px;
-  margin: 0;
+  margin-top: 5px;
+  margin-right: -2px;
   appearance: none;
   border-radius: 20px;
   background: #eadfd3;
@@ -1886,6 +1887,7 @@ select.detail-field {
   height: 30px;
   margin-right: 10px;
   padding: 0 25px 0 10px;
+  margin-top: 5px;
   border: 1px solid #efdcc9;
   border-radius: 8px;
   outline: none;
@@ -2053,7 +2055,7 @@ select.detail-field {
   grid-template-columns: repeat(4, 1fr);
   align-items: start;
   width: 100%;
-  height: 68px;
+  height: 50px;
   padding: 4px 7px 5px;
   background: var(--card);
   box-shadow: 0 -6px 20px rgb(84 70 53 / 7%);
@@ -2062,7 +2064,7 @@ select.detail-field {
 .nav-button {
   display: grid;
   width: 76px;
-  height: 59px;
+  height: 40px;
   grid-template-rows: 29px auto;
   place-items: center;
   margin: 0 auto;
@@ -2083,12 +2085,16 @@ select.detail-field {
   background: #766fa6;
 }
 
-.nav-button svg {
-  width: 24px;
-  height: 24px;
-  stroke: currentColor;
-  stroke-width: 1.8;
+.nav-button .nav-icon {
+  display: block;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;   
 }
+
+.nav-button .nav-icon--meds { width: 22px; height: 22px; }
+
+.nav-button .nav-icon--settings { width: 23px; height: 23px; }
 
 .nav-button > span {
   font-size: 9px;
