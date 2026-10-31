@@ -1,7 +1,7 @@
 <script setup>
 import { computed, reactive } from 'vue'
 import AppHeader from '../components/ui/AppHeader.vue'
-import { go, saveProfile, showError } from '../store/store'
+import { go, saveProfile, setUserRole, showError } from '../store/store'
 import { state } from '../store/state'
 
 const form = reactive({
@@ -15,6 +15,15 @@ async function submit() {
   try {
     await saveProfile(form)
     go('settings')
+  } catch (error) {
+    showError(error)
+  }
+}
+
+async function switchRole(role) {
+  if (state.user?.role === role) return
+  try {
+    await setUserRole(role)
   } catch (error) {
     showError(error)
   }
@@ -56,5 +65,10 @@ async function submit() {
       </div>
       <button class="primary-button form-submit" type="submit">Сохранить</button>
     </form>
+    <div class="role-switch" aria-label="Роль пользователя">
+      <span>режим</span>
+      <button :class="{ active: state.user?.role === 'user' }" type="button" @click="switchRole('user')">user</button>
+      <button :class="{ active: state.user?.role === 'admin' }" type="button" @click="switchRole('admin')">admin</button>
+    </div>
   </section>
 </template>

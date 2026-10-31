@@ -360,6 +360,11 @@ export async function saveProfile(form) {
   showToast('Профиль сохранён')
 }
 
+export async function setUserRole(role) {
+  state.user = await usersApi.updateMe({ role })
+  showToast(role === 'admin' ? 'Режим администратора' : 'Режим пользователя')
+}
+
 export function updatePreferences(value) {
   state.preferences = { ...state.preferences, ...value }
   savePreferences(state.preferences)

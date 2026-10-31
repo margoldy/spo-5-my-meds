@@ -71,12 +71,14 @@ function openAdmin(item = null) {
     strength: item.strength || '',
     isActive: item.is_active,
   } : { name: '', internationalName: '', manufacturer: '', category: '', instructionUrl: '', form: '', strength: '', isActive: true })
+  if (selected.value?.id === item?.id) selected.value = null
   adminModal.value = true
 }
 
 async function submitAdmin() {
   try {
     await saveMedication(form, editingId.value)
+    await refresh()
     adminModal.value = false
   } catch (error) {
     showError(error)

@@ -25,6 +25,7 @@ class UserUpdate(BaseModel):
     birth_date: date | None = None
     avatar_url: str | None = Field(default=None, max_length=2048)
     timezone: str | None = Field(default=None, max_length=64)
+    role: UserRole | None = None
 
     @field_validator("timezone")
     @classmethod

@@ -11,6 +11,8 @@ class UsersService:
     def update(self, *, user: User, values: dict) -> User:
         if values.get("timezone") is None:
             values.pop("timezone", None)
+        if values.get("role") is None:
+            values.pop("role", None)
         return self.q_u.update(user=user, values=values)
 
     def get_encrypted_dek(self, *, user: User) -> str:
