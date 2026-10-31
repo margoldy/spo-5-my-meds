@@ -27,7 +27,4 @@ const minute = computed({
       <option v-for="item in minutes" :key="item" :value="item">{{ item }}</option>
     </select>
   </div>
-  <div class="time-presets">
-    <button v-for="item in ['08:00', '12:00', '15:00', '21:00']" :key="item" type="button" @click="$emit('update:modelValue', item)">{{ item }}</button>
-  </div>
 </template>

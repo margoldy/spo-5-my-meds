@@ -167,7 +167,7 @@ button:disabled {
   height: 43px;
   margin-bottom: 18px;
   padding: 0 15px;
-  border: 0;
+  border: 1px solid #efdcc9;
   border-radius: 14px;
   outline: none;
   color: var(--text);
@@ -505,9 +505,9 @@ button:disabled {
 .field-label,
 .section-title {
   display: block;
-  margin: 0 0 5px 14px;
+  margin: 0 0 5px 0px;
   color: var(--ink);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
 }
 
@@ -516,7 +516,8 @@ button:disabled {
 }
 
 .form-section {
-  margin-bottom: 13px;
+  margin-top: 10px;
+  margin-bottom: 15px;
   padding: 14px 14px 2px;
   border: 1px solid rgb(242 221 198 / 72%);
   border-radius: 14px;
@@ -534,7 +535,7 @@ button:disabled {
 
 .form-section-heading strong {
   color: var(--ink);
-  font-size: 15px;
+  font-size: 17px;
   text-align: right;
 }
 
@@ -555,20 +556,20 @@ button:disabled {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 4px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
   padding: 4px;
   border-radius: 12px;
   background: #f6e9d5;
 }
 
 .segmented-control button {
-  min-height: 37px;
+  min-height: 30px;
   padding: 6px 8px;
   border: 0;
   border-radius: 9px;
   color: var(--muted);
   background: transparent;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
 }
 
@@ -602,7 +603,7 @@ button:disabled {
   border: 0;
   outline: none;
   color: var(--text);
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .detail-field,
@@ -610,9 +611,9 @@ button:disabled {
   min-height: 43px;
   margin-bottom: 13px;
   padding: 10px 10px;
-  border: 1px solid transparent;
-  border-radius: 9px;
-  background: var(--card);
+  border: 1px solid #efdcc9;
+  border-radius: 8px;
+  background-color: var(--white);
 }
 
 .detail-field:focus,
@@ -636,7 +637,7 @@ select.detail-field {
   min-height: 70px;
   margin-bottom: 13px;
   padding: 12px 15px;
-  border: 1px solid transparent;
+  border: 1px solid #f0e0d3;
   border-radius: 9px;
   resize: vertical;
   background: var(--card);
@@ -678,13 +679,13 @@ select.detail-field {
 }
 
 .time-picker select {
-  height: 52px;
-  border: 0;
-  border-radius: 7px;
+  height: 45px;
+  border: 1px solid #efdcc9;
+  border-radius: 8px;
   outline: none;
-  color: var(--ink);
+  color: var(--text);
   text-align: center;
-  background: var(--card);
+  background: var(--white);
   font-size: 22px;
 }
 
@@ -727,11 +728,9 @@ select.detail-field {
 }
 
 .schedule-editor {
-  margin: 8px 0 14px;
-  padding: 12px;
-  border: 1px dashed #efc7bd;
+  margin: 0 0 14px;
   border-radius: 12px;
-  background: rgb(255 253 247 / 68%);
+  background: transparent;
 }
 
 .schedule-row {
@@ -754,7 +753,7 @@ select.detail-field {
   min-height: 38px;
   margin: 5px 0 14px;
   border-style: dashed;
-  background: rgb(255 253 247 / 58%);
+  background: var(--white);
 }
 
 .schedule-main strong {
@@ -808,7 +807,6 @@ select.detail-field {
   background: #ff8194;
 }
 
-.secondary-button:hover,
 .action-button:hover {
   background: rgb(255 225 223 / 42%);
 }
@@ -816,7 +814,7 @@ select.detail-field {
 .secondary-button,
 .action-button {
   color: var(--accent-dark);
-  background: transparent;
+  background: var(--white);
 }
 
 .form-submit,

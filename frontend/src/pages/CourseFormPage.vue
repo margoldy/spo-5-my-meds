@@ -87,7 +87,7 @@ onMounted(async () => {
     <AppHeader title="Добавить лекарство" back @back="go('courses')" />
     <form @submit.prevent="submit">
       <div class="form-section">
-        <div class="form-section-heading"><span class="section-kicker">Шаг 1</span><strong>Выберите лекарство</strong></div>
+        <div class="form-section-heading"><strong>Выберите лекарство</strong><span class="section-kicker">Шаг 1</span></div>
         <div class="segmented-control">
           <button type="button" :class="{ active: source === 'catalog' }" @click="source = 'catalog'">Из справочника</button>
           <button type="button" :class="{ active: source === 'custom' }" @click="source = 'custom'">Ввести своё</button>
@@ -105,7 +105,7 @@ onMounted(async () => {
         </template>
       </div>
       <div class="form-section">
-        <div class="form-section-heading"><span class="section-kicker">Шаг 2</span><strong>Укажите период</strong></div>
+        <div class="form-section-heading"><strong>Укажите период</strong><span class="section-kicker">Шаг 2</span></div>
         <div class="two-columns">
           <label>Начало<input v-model="form.startDate" class="detail-field" type="date" required></label>
           <label>Конец<input v-model="form.endDate" class="detail-field" type="date" :min="form.startDate"></label>
@@ -115,10 +115,9 @@ onMounted(async () => {
           <button type="button" :class="{ active: mode === 'scheduled' }" @click="mode = 'scheduled'">По расписанию</button>
           <button type="button" :class="{ active: mode === 'as-needed' }" @click="mode = 'as-needed'">По необходимости</button>
         </div>
-        <p v-if="mode === 'as-needed'" class="field-hint">Без расписания и напоминаний</p>
       </div>
       <div v-if="mode === 'scheduled'" class="form-section">
-        <div class="form-section-heading"><span class="section-kicker">Шаг 3</span><strong>Добавьте время</strong></div>
+        <div class="form-section-heading"><strong>Добавьте время</strong><span class="section-kicker">Шаг 3</span></div>
         <div class="schedule-list draft-schedules">
           <div v-for="(item, index) in schedules" :key="`${item.time}-${index}`" class="schedule-row">
             <button class="schedule-main" type="button" @click="editDraft(index)">
@@ -143,7 +142,7 @@ onMounted(async () => {
         </div>
       </div>
       <div class="form-section optional-section">
-        <div class="form-section-heading"><span class="section-kicker">Необязательно</span><strong>Заметки</strong></div>
+        <div class="form-section-heading"><strong>Заметки</strong><span class="section-kicker">Необязательно</span></div>
         <textarea v-model="form.notes" class="notes" placeholder="Например, принимать после еды"></textarea>
       </div>
       <button class="primary-button form-submit" type="submit">Сохранить курс</button>
