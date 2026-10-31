@@ -33,7 +33,7 @@ function icon(tab, isActive) {
       <img class="nav-icon nav-icon--meds"     :src="icon('courses',  active === 'courses')"  alt="">
     </button>
 
-    <button class="nav-button history-tab" :class="{ active: active === 'history' }" type="button" aria-label="История" @click="$emit('change', 'history')">
+    <button class="nav-button" :class="{ active: active === 'history' }" type="button" aria-label="История" @click="$emit('change', 'history')">
       <img class="nav-icon nav-icon--history"  :src="icon('history',  active === 'history')"  alt="">
     </button>
 

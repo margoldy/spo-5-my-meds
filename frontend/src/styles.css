@@ -101,14 +101,20 @@ button:disabled {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 18px;
+  position: relative;
 }
 
 .page-title-row .title {
+  flex: 1;
+  text-align: center;
   margin: 0;
-  text-align: left;
 }
 
 .catalog-shortcut {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
   display: inline-flex;
   min-height: 36px;
   align-items: center;
@@ -218,12 +224,6 @@ button:disabled {
   align-items: start;
 }
 
-.schedule-screen {
-  background:
-    radial-gradient(circle at 100% 7%, rgb(255 166 174 / 18%), transparent 30%),
-    linear-gradient(180deg, #fff3d2 0%, var(--surface) 58%);
-}
-
 .schedule-intro {
   display: flex;
   flex-direction: column;
@@ -242,7 +242,7 @@ button:disabled {
 
 .schedule-screen .month-heading {
   align-items: center;
-  margin-bottom: 9px;
+  margin-bottom: 12px;
 }
 
 .schedule-screen .month-heading .title {
@@ -488,9 +488,8 @@ button:disabled {
   right: 20px;
   bottom: 77px;
   z-index: 3;
-  width: 54px;
-  height: 54px;
-  padding: 0 0 5px;
+  width: 50px;
+  height: 50px;
   border: 0;
   border-radius: 50%;
   color: var(--white);
@@ -1434,20 +1433,13 @@ select.detail-field {
   margin-bottom: 9px;
 }
 
-.history-screen {
-  color: #5f5a84;
-  background:
-    radial-gradient(circle at 0 0, rgb(153 143 204 / 18%), transparent 30%),
-    linear-gradient(180deg, #f4f0ff 0%, #f8f4ef 54%, #fff5d7 100%);
-}
-
 .history-heading {
   margin-bottom: 15px;
   text-align: center;
 }
 
 .history-heading > span {
-  color: #8179ad;
+  color: var(--accent-dark);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: .1em;
@@ -1456,13 +1448,13 @@ select.detail-field {
 
 .history-heading .title {
   margin: 3px 0 4px;
-  color: #514c7f;
+  color: var(--ink);
   font-size: 28px;
 }
 
 .history-heading p {
   margin: 0;
-  color: #958faf;
+  color: var(--muted);
   font-size: 11px;
 }
 
@@ -1473,13 +1465,13 @@ select.detail-field {
   gap: 12px;
   margin-bottom: 11px;
   padding: 8px 9px 8px 13px;
-  border: 1px solid #e5def1;
+  border: 1px solid rgb(242 221 198 / 72%);
   border-radius: 12px;
-  background: rgb(255 255 255 / 62%);
+  background: var(--card);  
 }
 
 .history-filter label {
-  color: #625d8e;
+  color: var(--ink);
   font-size: 11px;
   font-weight: 700;
 }
@@ -1489,21 +1481,21 @@ select.detail-field {
   max-width: 205px;
   height: 32px;
   padding: 0 28px 0 10px;
-  border: 0;
-  border-radius: 9px;
   outline: none;
-  color: #625d8e;
-  background: #f0ebfa;
+  color: var(--accent-dark);
+  background: var(--white);
+  border: 1px solid #efdcc9;
+  border-radius: 9px;
   font-size: 11px;
 }
 
 .history-calendar-card {
   margin-bottom: 16px;
   padding: 11px 10px 13px;
-  border: 1px solid #ded6ed;
   border-radius: 18px;
-  background: rgb(255 255 255 / 80%);
-  box-shadow: 0 9px 24px rgb(79 70 126 / 10%);
+  border: 1px solid #f3d3c6;
+  background: rgb(255 251 236 / 92%);
+  box-shadow: 0 7px 20px rgb(184 97 82 / 8%);
 }
 
 .history-month-heading {
@@ -1513,17 +1505,17 @@ select.detail-field {
 
 .history-month-heading h2 {
   margin: 0;
-  color: #514c7f;
+  color: var(--ink);
   text-align: center;
   font-size: 16px;
 }
 
 .history-month-heading > button {
-  color: #726aa1;
+  color: var(--ink);
 }
 
 .history-calendar-grid .weekday {
-  color: #9d96b8;
+  color: var(--muted);
 }
 
 .history-day {
@@ -1535,8 +1527,8 @@ select.detail-field {
   margin: 1px auto;
   padding: 0;
   border: 0;
-  border-radius: 11px;
-  color: #625d8e;
+  color: var(--text);
+  border-radius: 50%;
   background: transparent;
   font-size: 12px;
   cursor: pointer;
@@ -1547,9 +1539,9 @@ select.detail-field {
 }
 
 .history-day.selected {
-  color: #fff;
-  background: linear-gradient(145deg, #8981b9, #665f98);
-  box-shadow: 0 5px 10px rgb(82 75 132 / 24%);
+  color: var(--white);
+  background: linear-gradient(145deg, #ff9aa8, #ef7487);
+  box-shadow: 0 4px 9px rgb(207 77 89 / 20%);
 }
 
 .history-day i {
@@ -1558,7 +1550,7 @@ select.detail-field {
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background: #9d74a8;
+  background: var(--accent-dark);
 }
 
 .history-day.selected i {
@@ -1579,7 +1571,7 @@ select.detail-field {
 
 .history-date-heading span {
   margin-bottom: 2px;
-  color: #9a93b2;
+  color: var(--muted);
   font-size: 9px;
   font-weight: 700;
   letter-spacing: .06em;
@@ -1587,7 +1579,7 @@ select.detail-field {
 }
 
 .history-date-heading strong {
-  color: #514c7f;
+  color: var(--ink);
   font-size: 16px;
 }
 
@@ -1597,8 +1589,8 @@ select.detail-field {
   height: 30px;
   place-items: center;
   border-radius: 50%;
-  color: #fff;
-  background: #7a72a8;
+  color: var(--white);
+  background: var(--accent-dark);
   font-size: 12px;
 }
 
@@ -1609,11 +1601,11 @@ select.detail-field {
   align-items: center;
   gap: 10px;
   padding: 11px 10px;
-  border: 1px solid #ddd6eb;
   border-radius: 15px;
-  color: #625d8e;
-  background: rgb(255 255 255 / 83%);
-  box-shadow: 0 5px 16px rgb(79 70 126 / 7%);
+  border: 1px solid #f3d8ca;
+  color: var(--text);
+  background: var(--card);
+  box-shadow: 0 5px 14px rgb(184 97 82 / 7%);
 }
 
 .history-time {
@@ -1623,8 +1615,8 @@ select.detail-field {
   flex-direction: column;
   justify-content: center;
   border-radius: 11px;
-  color: #fff;
-  background: #7b73aa;
+  color: var(--white);
+  background: linear-gradient(145deg, #ff9aa8, #ef7487);
 }
 
 .history-time strong {
@@ -1642,17 +1634,17 @@ select.detail-field {
 }
 
 .history-main strong {
-  color: #514c7f;
+  color: var(--ink);
   font-size: 15px;
 }
 
 .history-main span {
-  color: #756e9d;
+  color: var(--text);
   font-size: 12px;
 }
 
 .history-main small {
-  color: #9a93b2;
+  color: var(--muted);
   font-size: 9px;
 }
 
@@ -1662,25 +1654,11 @@ select.detail-field {
   padding: 0 0 2px;
   border: 0;
   border-radius: 50%;
-  color: #8a82af;
-  background: #eee9f7;
+  color: var(--accent-dark);
+  background: var(--accent-soft);
   font-family: Arial, sans-serif;
   font-size: 18px;
   cursor: pointer;
-}
-
-.history-screen .empty-state {
-  border-color: #d9d1e8;
-  color: #756e9d;
-  background: rgb(255 255 255 / 55%);
-}
-
-.history-screen .empty-state-icon {
-  background: #e9e3f4;
-}
-
-.history-screen .empty-state-icon svg {
-  stroke: #7b73aa;
 }
 
 .settings-card {
@@ -1999,7 +1977,7 @@ select.detail-field {
   flex-direction: column;
   justify-content: center;
   padding: 25px 23px;
-  border: 1px dashed #efcfc4;
+  border: 1px solid #efcfc4;
   border-radius: 14px;
   color: var(--text);
   text-align: center;
@@ -2008,25 +1986,25 @@ select.detail-field {
 
 .empty-state-icon {
   display: grid;
-  width: 56px;
-  height: 56px;
+  width: 50px;
+  height: 50px;
   place-items: center;
   margin-bottom: 12px;
+  border: 3px solid var(--accent);
   border-radius: 50%;
-  background: var(--accent-soft);
+  background: transparent;
 }
 
-.empty-state-icon svg {
-  width: 34px;
-  height: 34px;
-  stroke: var(--accent);
-  stroke-width: 2.1;
-  stroke-linecap: round;
+.empty-state-icon img {
+  display: block;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
 }
 
 .empty-state strong {
   color: var(--ink);
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .empty-state p {
@@ -2038,13 +2016,14 @@ select.detail-field {
 }
 
 .empty-state button {
-  margin-top: 15px;
+  margin-top: 8px;
   padding: 8px 13px;
   border: 1px solid var(--accent);
   border-radius: 9px;
   color: var(--accent-dark);
   background: var(--white);
   cursor: pointer;
+  font-size: 15px;
 }
 
 .bottom-nav {
@@ -2190,13 +2169,13 @@ select.detail-field {
 }
 
 .auth-card-heading {
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 
 .auth-card-heading p {
-  margin: 5px 0 0;
+  margin: 2px 0 -3px 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.4;
 }
 
@@ -2208,7 +2187,7 @@ select.detail-field {
   display: block;
   margin: 0 0 6px 3px;
   color: var(--ink);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -2224,7 +2203,7 @@ select.detail-field {
   width: 18px;
   height: 18px;
   fill: none;
-  stroke: var(--muted);
+  stroke: var(--ink);
   stroke-width: 1.6;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -2233,11 +2212,11 @@ select.detail-field {
 .auth-input input {
   width: 100%;
   height: 46px;
-  padding: 0 13px 0 43px;
-  border: 1px solid transparent;
+  padding: 0 13px 0 40px;
+  border: 1px solid #efdcc9;
   border-radius: 12px;
   outline: none;
-  color: var(--ink);
+  color: var(--text);
   background: var(--white);
   font-size: 14px;
 }
@@ -2351,12 +2330,13 @@ select.detail-field {
 .text-button,
 .guest-login {
   display: block;
-  margin: 15px auto 0;
+  margin: 10px auto 0;
   padding: 5px;
   border: 0;
-  color: var(--accent-dark);
+  color: var(--ink);
   background: transparent;
   cursor: pointer;
+  font-size: 14px;
 }
 
 .guest-login {
@@ -2366,6 +2346,7 @@ select.detail-field {
   z-index: 2;
   margin: 0;
   padding: 7px 9px;
+  border: 1px solid #efdcc9;
   border-radius: 16px;
   background: rgb(255 253 247 / 55%);
   font-size: 12px;
@@ -2387,7 +2368,7 @@ select.detail-field {
   height: 58px;
   margin-bottom: 12px;
   padding-left: 11px;
-  border: 0;
+  border: 1px solid #efdcc9;
   border-radius: 9px;
   outline: none;
   color: var(--ink);

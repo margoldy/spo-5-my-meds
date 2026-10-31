@@ -55,9 +55,6 @@ onMounted(refresh)
 
 <template>
   <section class="screen schedule-screen">
-    <div class="schedule-intro">
-      <span>План приёмов</span>
-    </div>
     <div class="month-heading">
       <button type="button" aria-label="Предыдущий месяц" @click="changeMonth(-1)">‹</button>
       <h1 class="title">{{ monthTitle(month) }}</h1>

@@ -33,7 +33,6 @@ onMounted(async () => {
       <h1 class="title">Мои лекарства</h1>
       <button class="catalog-shortcut" type="button" @click="go('catalog')">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 5.5c3.4-.8 6.4 0 9 2.2v12c-2.6-2.2-5.6-3-9-2.2zM21 5.5c-3.4-.8-6.4 0-9 2.2v12c2.6-2.2 5.6-3 9-2.2z"/></svg>
-        <span>Справочник</span>
       </button>
     </div>
     <input v-model.trim="query" class="search" placeholder="Найти лекарство...">
