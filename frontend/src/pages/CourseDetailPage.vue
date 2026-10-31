@@ -160,7 +160,6 @@ onMounted(async () => {
     </form>
     <template v-else>
       <div class="course-detail-hero">
-        <span class="section-kicker">Лекарство</span>
         <h2>{{ course.name }}</h2>
         <span class="badge" :class="{ inactive: !course.is_active }">{{ course.is_active ? 'Активный курс' : 'Курс завершён' }}</span>
       </div>

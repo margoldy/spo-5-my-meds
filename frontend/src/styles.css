@@ -333,7 +333,7 @@ button:disabled {
 }
 
 .time-label {
-  margin: 0 0 5px 10px;
+  margin: -5px 0 5px 10px;
   color: var(--ink);
   font-size: 18px;
   line-height: 1;
@@ -344,7 +344,8 @@ button:disabled {
 .detail-card,
 .catalog-row,
 .read-field {
-  border-radius: 5px;
+  border: 1px solid #efdcc9;
+  border-radius: 8px;
   background: var(--card);
 }
 
@@ -352,12 +353,11 @@ button:disabled {
   display: flex;
   min-height: 72px;
   align-items: center;
-  padding: 11px 13px 10px 15px;
+  padding: 11px 13px 15px 15px;
 }
 
 .schedule-screen .intake-card {
   border: 1px solid #f3d8ca;
-  border-left: 4px solid var(--accent);
   border-radius: 12px;
   background: #fffaf0;
   box-shadow: 0 5px 14px rgb(184 97 82 / 7%);
@@ -386,7 +386,7 @@ button:disabled {
 }
 
 .medicine-name {
-  margin: 0 0 6px;
+  margin: 0 0 5px;
   color: var(--text);
   font-size: 16px;
   font-weight: 700;
@@ -394,13 +394,13 @@ button:disabled {
 
 .dose {
   margin: 0;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .taken-at {
   margin-top: 6px;
   color: var(--ink);
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .check-button {
@@ -418,10 +418,11 @@ button:disabled {
   cursor: pointer;
 }
 
-.check-button svg {
+.check-button .check-icon {
   display: block;
   width: 20px;
   height: 20px;
+  object-fit: contain;
 }
 
 .course-list,
@@ -433,7 +434,7 @@ button:disabled {
 }
 
 .course-list {
-  gap: 14px;
+  gap: 10px;
 }
 
 .course-card {
@@ -507,7 +508,7 @@ button:disabled {
   display: block;
   margin: 0 0 5px 0px;
   color: var(--ink);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
 }
 
@@ -2295,7 +2296,7 @@ select.detail-field {
 .course-detail-hero {
   position: relative;
   margin: -3px 0 17px;
-  padding: 18px 16px 16px;
+  padding: 5px 16px 16px;
   overflow: hidden;
   border: 1px solid rgb(242 221 198 / 72%);
   border-radius: 15px;
@@ -2325,6 +2326,7 @@ select.detail-field {
   position: relative;
   z-index: 1;
   background: var(--white);
+  border: 1px solid #efdcc9;
 }
 
 .course-period {

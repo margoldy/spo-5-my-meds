@@ -4,6 +4,7 @@ import EmptyState from '../components/ui/EmptyState.vue'
 import { calendarDays, dateInTimeZone, formatTime, isoDate, monthTitle } from '../utils/date'
 import { cancelScheduled, go, loadDay, showError, takeScheduled } from '../store/store'
 import { state } from '../store/state'
+import checkIcon from '../assets/icons/flower.svg'
 
 const initialDate = dateInTimeZone(new Date(), state.user?.timezone)
 const selected = ref(initialDate)
@@ -77,7 +78,7 @@ onMounted(refresh)
           <span v-if="item.intake" class="taken-at">Принято в {{ formatTime(item.intake.taken_at, state.user?.timezone) }}</span>
         </button>
         <button class="check-button" :class="{ taken: item.intake }" type="button" :aria-label="item.intake ? 'Отменить приём' : 'Отметить приём'" @click="toggleIntake(item)">
-          <svg v-if="item.intake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"><path d="M12 5v14M5.9 8.5l12.2 7M18.1 8.5l-12.2 7"/></svg>
+          <img v-if="item.intake" class="check-icon" :src="checkIcon" alt="">
         </button>
       </article>
     </section>
