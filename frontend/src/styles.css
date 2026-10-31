@@ -1711,6 +1711,35 @@ select.detail-field {
   text-overflow: ellipsis;
 }
 
+.role-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  margin: 16px 0 2px;
+  color: #c9b9b3;
+  font-size: 9px;
+}
+
+.role-switch span {
+  margin-right: 2px;
+}
+
+.role-switch button {
+  padding: 2px 5px;
+  border: 0;
+  border-radius: 5px;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+}
+
+.role-switch button.active {
+  color: #a89495;
+  background: rgb(255 255 255 / 45%);
+}
+
 .settings-card strong {
   color: var(--ink);
   font-size: 18px;

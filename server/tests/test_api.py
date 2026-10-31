@@ -240,6 +240,7 @@ def test_auth(client):
 
 def test_profile_and_key(client):
     profile = client.patch("/api/v1/users/me", json={"name": "Новое имя"})
+    role = client.patch("/api/v1/users/me", json={"role": "admin"})
     key = client.put(
         "/api/v1/users/me/encryption-key",
         json={"encrypted_dek": "new-key"},
@@ -247,6 +248,8 @@ def test_profile_and_key(client):
 
     assert profile.status_code == 200
     assert profile.json()["name"] == "Новое имя"
+    assert role.status_code == 200
+    assert role.json()["role"] == "admin"
     assert key.json() == {"encrypted_dek": "new-key"}
 
 
@@ -258,10 +261,17 @@ def test_medications(client, user):
         "/api/v1/medications",
         json={"name": "Витрум"},
     )
+    updated = client.patch(
+        "/api/v1/medications/1",
+        json={"name": "Витрум Плюс", "is_active": False},
+    )
 
     assert listed.json()["total"] == 1
     assert detail.json()["name"] == "Витрум"
     assert created.status_code == 201
+    assert updated.status_code == 200
+    assert updated.json()["name"] == "Витрум Плюс"
+    assert updated.json()["is_active"] is False
 
 
 def test_courses(client):
