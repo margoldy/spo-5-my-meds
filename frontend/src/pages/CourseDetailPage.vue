@@ -145,7 +145,6 @@ onMounted(async () => {
     <AppHeader title="Информация о лекарстве" back @back="go('courses')" />
     <form v-if="editing" @submit.prevent="saveDetails">
       <div class="form-section">
-        <div class="form-section-heading"><span class="section-kicker">Курс</span><strong>Основные данные</strong></div>
         <label class="field-label">Название</label>
         <input v-model.trim="form.name" class="detail-field" required>
         <div class="two-columns">
